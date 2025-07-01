@@ -1,15 +1,14 @@
 defmodule GCD do
-
   def gcd(n1, 0), do: n1
   def gcd(n1, n2) when n2 < 0, do: gcd(n1, -n2)
   def gcd(n1, n2) when n1 < 0, do: gcd(-n1, n2)
+
   def gcd(n1, n2) do
     case rem(n1, n2) do
       0 -> n2
       r -> gcd(n2, r)
     end
   end
-
 end
 
 ExUnit.start()
@@ -25,7 +24,7 @@ defmodule GCDTest do
   end
 
   test "gcd with negative arguments" do
-    assert gcd(24, 18) == 6 
+    assert gcd(24, 18) == 6
     assert gcd(-24, 18) == 6
     assert gcd(24, -18) == 6
     assert gcd(-24, -18) == 6
