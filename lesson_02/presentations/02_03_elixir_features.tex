@@ -1,0 +1,160 @@
+\PassOptionsToPackage{x11names}{xcolor}
+%% https://tex.stackexchange.com/questions/74805/latex-error-option-clash-for-package-xcolor
+
+\documentclass[10pt]{beamer}
+\usepackage{fontspec}
+\setmainfont{Ubuntu}[]
+\setsansfont{Ubuntu}[]
+\setmonofont{Ubuntu Mono}[]
+
+\usepackage{graphicx}
+\graphicspath{ {../img/} }
+
+\usepackage{listings}
+\lstdefinelanguage{elixir}{
+    morekeywords={case,catch,def,do,else,false,%
+        use,alias,receive,timeout,defmacro,defp,%
+        for,if,import,defmodule,defprotocol,%
+        nil,defmacrop,defoverridable,defimpl,%
+        super,fn,raise,true,try,end,with,%
+        unless},
+    otherkeywords={<-,->, |>, \%\{, \}, \{, \, (, )},
+    sensitive=true,
+    morecomment=[l]{\#},
+    morecomment=[n]{/*}{*/},
+	basicstyle=\ttfamily,
+	breaklines,
+	showstringspaces=false,
+	frame=trbl
+}
+
+%% https://latex-tutorial.com/color-latex/
+\lstset{
+  language=elixir,
+  keywordstyle=\color{SteelBlue4},
+  identifierstyle=\color{DeepSkyBlue3},
+  backgroundcolor=\color{Ivory1}
+}
+
+\beamertemplatenavigationsymbolsempty
+
+\title{Свойства Эликсир}
+
+\begin{document}
+
+\begin{frame}
+  \frametitle{Свойства Эликсир}
+  \begin{itemize}
+  \item Мощная система макросов
+  \item Высокоуровневый язык
+  \item Экосистема и сообщество
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Система макросов}
+  Работает на уровне абстрактного синтаксического дерева
+  \par
+  Abstract Syntax Tree (\textbf{AST}).
+  \par \bigskip
+  Позволяет расширять язык и строить
+  \par
+  Domain Specific Languages (\textbf{DSL}).
+  \par \bigskip
+  Примеры: \textbf{Ecto} и \textbf{Phoenix}.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Высокоуровневый язык}
+  \begin{itemize}
+  \item Оператор \textbf{pipe}
+  \item Макрос \textbf{with}
+  \item Абстракции Эликсир
+  \item Абстракции Эрланг
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Оператор pipe}
+  Несколько вызовов функций:
+  \begin{lstlisting}
+    a = 42
+    b = func1(a)
+    c = func2(b)
+    d = func3(c)
+  \end{lstlisting}
+  Можно собрать в цепочку:
+  \begin{lstlisting}
+    d = func3(func2(func1(42))
+  \end{lstlisting}
+  С оператором pipe сохраняется естественный порядок:
+  \begin{lstlisting}
+    d = 42 |> func1() |> func2() |> func3()
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Макрос with}
+  Композиция функций, которые могут вернуть ошибку:
+  \begin{lstlisting}
+    case func1() do
+      {:ok, a} ->
+        case func2() do
+          {:ok, b} ->
+            case func3() do
+              {:ok, c} -> a + b + c
+              error -> error
+            end
+          error -> error
+       end
+       error -> error
+    end
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Макрос with}
+  С макросом \textbf{with}:
+  \begin{lstlisting}
+    with a = func1(),
+         b = func2(),
+         c = func3() do
+      a + b + c
+    end
+  \end{lstlisting}
+  Обработка ошибок в стиле \textbf{Railway programming} (или~\textbf{do-notation}).
+\end{frame}
+
+\begin{frame}
+  \frametitle{Абстракции Эликсир}
+  \begin{itemize}
+  \item Коллекции \textbf{Enum}
+  \item Ленивые коллекции \textbf{Stream}
+  \item Строковые литералы \textbf{Sigil}
+  \item Протоколы
+  \item \textbf{Task} и \textbf{Agent}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Абстракции Эрланг}
+  \begin{itemize}
+  \item Функции высшего порядка
+  \item Конструкторы списков
+  \item Сопоставление с образцом
+  \item \textbf{gen\_server} и \textbf{supervisor}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Экосистема и сообщество}
+  \begin{itemize}
+  \item Большое и активное сообщество
+  \item Много библиотек и инструментов
+  \item Язык и экосистема быстро развиваются
+  \item Заимствование идей и инструментов из Эликсир в Эрланг
+  \end{itemize}
+\end{frame}
+
+\end{document}

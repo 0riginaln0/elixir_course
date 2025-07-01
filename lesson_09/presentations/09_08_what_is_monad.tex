@@ -1,0 +1,501 @@
+\PassOptionsToPackage{x11names}{xcolor}
+\documentclass[10pt]{beamer}
+
+\usepackage{fontspec}
+\setmainfont{Ubuntu}[]
+\setsansfont{Ubuntu}[]
+\setmonofont{Ubuntu Mono}[]
+
+\usepackage[absolute,overlay]{textpos} % [showboxes]
+
+\usepackage{listings}
+\lstdefinelanguage{elixir}{
+    morekeywords={case,catch,def,do,else,false,%
+        use,alias,receive,timeout,defmacro,defp,%
+        for,if,import,defmodule,defprotocol,%
+        nil,defmacrop,defoverridable,defimpl,%
+        super,fn,raise,true,try,end,with,%
+        unless},
+    otherkeywords={<-,->, |>, \%\{, \}, \{, \, (, )},
+    sensitive=true,
+    morecomment=[l]{\#},
+    morecomment=[n]{/*}{*/},
+	basicstyle=\ttfamily,
+	breaklines,
+	showstringspaces=false,
+	frame=trbl
+}
+
+%% https://latex-tutorial.com/color-latex/
+\lstset{
+  language=elixir,
+  keywordstyle=\color{SteelBlue4},
+  identifierstyle=\color{DeepSkyBlue3},
+  backgroundcolor=\color{Ivory1}
+}
+
+\beamertemplatenavigationsymbolsempty
+
+\title{Что такое монада?}
+
+\begin{document}
+
+\begin{frame}
+  \frametitle{Что такое монада?}
+  Копнём функциональное программирование глубже:
+  \par \bigskip
+  \begin{itemize}
+  \item Монады,
+  \item Каррирование,
+  \item Монадные трансформеры.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Элементы ФП}
+  Из 7-го урока:
+  \par \bigskip
+  \begin{itemize}
+  \item Иммутабельные данные (Immutability);
+  \item Рекурсия, как основной способ итерации по коллекциям;
+  \item Функции высшего порядка (HOF);
+  \item Анонимные функции (замыкания, лямбды);
+  \item Алгебраические типы данных (ADT);
+  \item Сопоставление с образцом (Pattern Matching);
+  \item Ленивые вычисления (Lazy Evaluation).
+  \item Автоматический вывод типов (Type Inference);
+  \item Чистые функции и контроль побочных эффектов.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Что такое ФП?}
+  Код, который \textbf{в основном} состоит из элементов ФП.
+  \par \bigskip
+  Хотя в нём могут быть не-ФП элементы:
+  \begin{itemize}
+  \item мутабельная память,
+  \item циклы for вместо рекурсии,
+  \item побочные эффекты.
+  \end{itemize}
+  \par \bigskip
+  Дело в пропорции тех и других элементов.
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Что такое монада?}
+  Монада -- это значение, обернутое в некоторый контекст.
+  \par \bigskip
+  \begin{lstlisting}
+{:ok, book} =
+  Bookshop.Controller.validate_book(data)
+  \end{lstlisting}
+  Значение \textbf{book} обернуто в контекст \textbf{\{:ok, ...\}}.
+  \par \bigskip
+  \begin{lstlisting}
+{:error, :book_not_found} =
+  Bookshop.Controller.validate_book(data)
+  \end{lstlisting}
+  Значение \textbf{:book\_not\_found} обернуто в контекст \textbf{\{:error, ...\}}.
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Монада Result}
+  Такой тип данных:
+  \par \bigskip
+  \begin{lstlisting}
+{:ok, successful_value} | {:error, error_value}
+  \end{lstlisting}
+  \par \bigskip
+  Это монада \textbf{Result} -- одна из самых популярных монад.
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Монада Result}
+  Есть практически во всех ФП языках и во многих не ФП языках:
+  \begin{itemize}
+  \item Haskell \textbf{Result e t}
+  \item OCaml \textbf{('e, 't) result}
+  \item Rust \textbf{Result<T, E>}
+  \item Scala \textbf{Either[E, T]}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Монада Maybe}
+  Тоже встречается часто:
+  \begin{lstlisting}
+> m = %{a: 42}
+> Map.fetch(m, :a)
+{:ok, 42}
+> Map.fetch(m, :b)
+:error
+  \end{lstlisting}
+  \par \bigskip
+  Описывается типом:
+  \begin{lstlisting}
+{:ok, value} | :no_value
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Монада Maybe}
+  Это упрощённый Result. 
+  \par \bigskip
+  Контекст здесь в том, что значение может быть,
+  \par \bigskip
+  или может отсутстовать.
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Монада Future}
+  \begin{lstlisting}
+> future_value = Task.async(fn() -> 42 end)
+%Task{
+  owner: #PID<0.107.0>,
+  pid: #PID<0.113.0>,
+  ref: #Reference<0.3496306138.1615593474.196666>
+}
+> Task.await(future_value)
+42
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Монада Future}
+  Это асинхронное вычисление.
+  \par \bigskip
+  Значение изначально отпутствует.
+  \par \bigskip
+  Контекст позволяет получить его позже, когда оно появится.
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Оператор Bind}
+  В 4-м решеним мы реализовали функцию bind:
+  \par \bigskip
+  \begin{lstlisting}
+@spec bind(m_fun(), m_fun()) :: m_fun()
+def bind(f1, f2) do
+  fn args ->
+    case f1.(args) do
+      {:ok, result} -> f2.(result)
+      {:error, error} -> {:error, error}
+    end
+  end
+end
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Оператор Bind}
+  И применяли её для связывания функций:
+  \par \bigskip
+  \begin{lstlisting}
+f =
+  FP.bind(&C.validate_incoming_data/1,
+          &step_validate_cat/1)
+  |> FP.bind(&step_validate_address/1)
+  |> FP.bind(&step_validate_books/1)
+  |> FP.bind(&step_create_order/1)
+
+f.(data)
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Оператор Bind}
+  Наша функция работает только с монадой \textbf{Result}.
+  \par \bigskip
+  Не сложно сделать похожую функцию для \textbf{Maybe}.
+  \par \bigskip
+  А вот сделать связывание для \textbf{Future} уже сложнее.
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Оператор Bind}
+  Допустим, у нас есть несколько асинхронных запросов:
+  \par \bigskip
+  \begin{lstlisting}
+future1 = request_service_1()
+value1 = Task.await(future1)
+
+future2 = request_service_2()
+value2 = Task.await(future2)
+
+future3 = request_service_3()
+value3 = Task.await(future3)
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Оператор Bind}
+  И мы хотим реализовать такой bind,
+  \par \bigskip
+  который свяжет эти запросы:
+  \par \bigskip
+  \begin{lstlisting}
+bind_async(
+  &request_service_1/0, 
+  &request_service_2/0
+)
+|> bind_async(&request_service_3/0)
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Оператор Bind}
+  Простая реализация, с блокировкой после каждого вызова.
+  \par \bigskip
+  Сложная реализация, с паралельными вызовами.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Что общего у всех монад?}
+  Почему мы собрали \textbf{Result} и \textbf{Future} в одну группу?
+  \par \bigskip
+  Что у них общего?
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Что общего у всех монад?}
+  Общее то, что для них можно сделать композицию функций
+  \par \bigskip
+  с помощью \textbf{bind}:
+  \par \bigskip
+  \begin{lstlisting}
+  validate_book
+  >>= buy_book
+  >>= deliver_book
+
+  request_service_1
+  >>= request_service_2
+  >>= request_service_3
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Что общего у всех монад?}
+  При желании в Эликсире тоже можно реализовать такой bind,
+  \par \bigskip
+  который будет работать с любыми монадами.
+  \par \bigskip
+  Есть и библиотека, которая делает нечто подобное:
+  \par \bigskip
+  \textcolor{DeepSkyBlue3}{https://hexdocs.pm/monad/Monad.html}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Другие операции над монадами}
+  Кроме bind возможны и другие операции над монадами.
+  \par \bigskip
+  Обозначим простое значение как \textbf{v},
+  \par \bigskip
+  а значение внутри монады как \textbf{M<v>}.
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Другие операции над монадами}
+  Для 2-х вариантов значений могут быть 4 варианта функций:
+  \par \bigskip
+  \begin{lstlisting}
+f1(v) :: v
+f2(v) :: M<v>
+f3(M<v>) :: v
+f4(M<v>) :: M<v>
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Другие операции над монадами}
+  Все эти варианты нужно комбинировать между собой:
+  \par \bigskip
+  \begin{lstlisting}
+  f1 |> f1
+  f2 >>= f2
+  f3 |> wrap_into_monad |> f3
+  f4 |> f4
+  \end{lstlisting}
+  \par \bigskip
+  В Хаскеле 1й и 4й варианты отличаются, а в Эликсир нет.
+  \par \bigskip
+  \begin{lstlisting}
+  f1 . f1
+  f2 >>= f2
+  f3 . return . f3
+  f4 >> f4
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{ФП -- это композиция функций}
+В теории любая программа сводится к цепочке функций,
+  \par \bigskip
+скомпонованых друг с другом разными способами:
+  \par \bigskip
+  \begin{lstlisting}
+  f1 >>= f2 . f3 >> f4 >>= f5 . f6
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}
+  \frametitle{ФП -- это композиция функций}
+Цепочка представляет собой happy path,
+  \par \bigskip
+а операторы композиции скрывают ветвления.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Каррирование}
+  Пока мы видели функции с одним аргументом.
+  \par \bigskip
+  А что, если аргументов больше?
+\end{frame}
+
+\begin{frame}
+  \frametitle{Каррирование}
+  Здесь помогает каррирование.
+  \par \bigskip
+  Функцию f/3 можно представить как функцию f/1,
+  \par
+  возвращающую f/2.
+  \par \bigskip
+  А функцию f/2 можно представить, как f/1,
+  \par
+  возвращающую f/1.
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Каррирование}
+  \begin{lstlisting}
+def f2(a) do
+  fn(b) -> a + b end
+end
+
+def f3(a) do
+  fn(b) ->
+    fn(c) -> a + b + c end
+  end
+end
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Каррирование}
+  \begin{lstlisting}
+> f1 = f2(1)
+> res = f1.(2)
+
+> res = f2(1).(2)
+
+> f2 = f3(1)
+> f1 = f2.(2)
+> res = f1.(3)
+
+> res = f3(1).(2).(3)
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Каррирование}
+  Любую функцию можно представить как функцию
+  \par
+  от одного аргумента.
+  \par \bigskip
+  В Эликсир это возможно, но совершенно непрактично.
+  \par \bigskip
+  В Хаскель это работает автоматически для любой функции.
+  \par \bigskip
+  За счёт каррирования мы можем применять
+  \par
+  все способы композиции ко всем функциям.
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Монадные трансформеры}
+  На пути композиции рано или поздно мы столкнемся
+  \par
+  с монадами, вложенными друг в друга:
+  \par \bigskip
+  \begin{lstlisting}
+  Result<Maybe<v>>
+  Future<Result<v>>
+  \end{lstlisting}
+  \par \bigskip
+  И тогда нам понадобятся преобразования одних монад в другие. 
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Монадные трансформеры}
+  Функция \textbf{FP.sequence/1} является монадным трансформером.  
+  \par \bigskip
+  \begin{lstlisting}
+  @spec sequence([result()]) ::
+    {:ok, [succesful()]} | {:error, error()}
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Монадные трансформеры}
+  Функция \textbf{FP.sequence/1} является монадным трансформером.  
+  \par \bigskip
+  \begin{lstlisting}
+iex(1)> [
+...(1)> {:ok, :book_1},
+...(1)> {:ok, :book_2},
+...(1)> {:ok, :book_3}
+...(1)> ] |> FP.sequence()
+{:ok, [:book_3, :book_2, :book_1]}
+
+iex(2)> [
+...(2)> {:ok, :book_1},
+...(2)> {:error, :book_not_found},
+...(2)> {:ok, :book_3}
+...(2)> ] |> FP.sequence()
+{:error, :book_not_found}
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Монадные трансформеры}
+  Она преобразует
+  \par \bigskip
+  \begin{lstlisting}
+  [ Result<Book.t, Error> ]
+  \end{lstlisting}
+  в
+  \begin{lstlisting}
+  Result< [Book.t], Error>
+  \end{lstlisting}
+  \par \bigskip
+  То есть преобразует список над Result в Result над списком.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Итоги}
+  В разных ФП языках монады и композиция функций
+  \par \bigskip
+  поддерживаются на разном уровне.
+  \par \bigskip
+  Лучше всего они развиты в \textbf{Haskell}, \textbf{Scala}, \textbf{OCaml} и \textbf{F\#}.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Итоги}
+  В \textbf{Elixir} поддержка монад откровенно слабая.
+  \par \bigskip
+  На практике удобно пользоваться \textbf{pipe}, \textbf{pipeline} и \textbf{with}.
+  \par \bigskip
+  Остальное не очень хорошо вписывается в дизайн языка.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Итоги}
+  Монады -- совсем другой мир.
+  \par \bigskip
+  Мир интересный, но, увы, не востребованный
+  \par \bigskip
+  в коммерческом программировании.
+\end{frame}
+
+\end{document}

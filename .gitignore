@@ -1,0 +1,16 @@
+# Elixir
+*.beam
+
+# Tex
+*.aux
+*.log
+*.toc
+*.pdf
+*.out
+_build
+
+# Vim
+*.swp
+
+# Emacs
+\#*

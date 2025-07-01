@@ -1,0 +1,375 @@
+\PassOptionsToPackage{x11names}{xcolor}
+\documentclass[10pt]{beamer}
+
+\usepackage{fontspec}
+\setmainfont{Ubuntu}[]
+\setsansfont{Ubuntu}[]
+\setmonofont{Ubuntu Mono}[]
+
+\usepackage{graphicx}
+\graphicspath{ {../img/} }
+
+\usepackage[absolute,overlay]{textpos} % [showboxes]
+
+\usepackage{listings}
+\lstdefinelanguage{elixir}{
+    morekeywords={case,catch,def,do,else,false,%
+        use,alias,receive,timeout,defmacro,defp,%
+        for,if,import,defmodule,defprotocol,%
+        nil,defmacrop,defoverridable,defimpl,%
+        super,fn,raise,true,try,end,with,%
+        unless},
+    otherkeywords={<-,->, |>, \%\{, \}, \{, \, (, )},
+    sensitive=true,
+    morecomment=[l]{\#},
+    morecomment=[n]{/*}{*/},
+	basicstyle=\ttfamily,
+	breaklines,
+	showstringspaces=false,
+	frame=trbl
+}
+
+%% https://latex-tutorial.com/color-latex/
+\lstset{
+  language=elixir,
+  keywordstyle=\color{SteelBlue4},
+  identifierstyle=\color{DeepSkyBlue3},
+  backgroundcolor=\color{Ivory1}
+}
+
+\beamertemplatenavigationsymbolsempty
+
+\title{Стандартные протоколы}
+
+\begin{document}
+
+\begin{frame}
+  \frametitle{Стандартные протоколы}
+  В Elixir есть 5 стандартных протоколов:
+  \par \bigskip
+  \begin{itemize}
+  \item Enumerable
+  \item Collectable
+  \item Inspect
+  \item List.Chars
+  \item String.Chars
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Enumerable}
+  Все коллекции реализуют протокол Enumerable.
+  \par \bigskip
+  Поэтому функции модулей \textbf{Enum} и \textbf{Stream} работают с:
+  \par \bigskip
+  \begin{itemize}
+  \item List
+  \item Keyword List
+  \item Map
+  \item MapSet
+  \item Range
+  \item String
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Enumerable}
+  Протокол содержит 4 функции:
+  \par \bigskip
+  \begin{itemize}
+  \item count/1
+  \item member?/2
+  \item reduce/3
+  \item slice/1
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Enumerable}
+  Напомню, что функций в модуле \textbf{Enum} много:
+  \par \bigskip
+  \begin{itemize}
+  \item map, filter, reduce
+  \item all?, any?
+  \item sort, find
+  \item drop\_while, dedup\_by
+  \item chunk\_by, chunk\_while
+  \item и другие
+  \end{itemize}
+  \par \bigskip
+  Все они реализуются через 4 функции протокола.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Enumerable}
+  Теоретически достаточно только \textbf{reduce}.
+  \par \bigskip
+  Все остальное можно реализовать через него.
+  \par \bigskip
+  Но на практике это не эффективно.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Enumerable}
+  \textbf{Enumerable.reduce} это не то же самое, что \textbf{Enum.reduce}.
+  \par \bigskip
+  Там более сложная реализация, где можно управлять итерацией:
+  останавливать, возобновлять и прерывать.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Collectable}
+  Протокол \textbf{Collectable} описывает,
+  \par \bigskip
+  как добавить элемент в коллекцию,
+  \par \bigskip
+  что позволяет преобразовать одну коллекцию в другую.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Collectable}
+  Функции модуля \textbf{Enum} всегда возвращают список.
+  \par \bigskip
+  Если нам на выходе нужен не список, а другая коллекция,
+  \par \bigskip
+  то можно использовать \textbf{Enum.into/1},
+  \par \bigskip
+  который использует протокол Collectable.
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Collectable}
+  Не редкий случай, когда у нас на входе словарь,
+  \par \bigskip
+  и на выходе мы хотим получить словарь:
+  \par \bigskip
+  \begin{lstlisting}
+iex(1)> my_map = %{a: 1, b: 2}
+%{a: 1, b: 2}
+iex(2)> Enum.map(my_map,
+...(2)> fn {k, v} -> {k, v + 1} end)
+[a: 2, b: 3]
+iex(3)> Enum.map(my_map,
+...(3)> fn {k, v} -> {k, v + 1} end) |>
+...(3)> Enum.into(%{})
+%{a: 2, b: 3}
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Collectable}
+  Аналогично это работает с конструкторами списков:
+  \par \bigskip
+  \begin{lstlisting}
+iex(4)> for {k, v} <- my_map, do: {k, v + 1}
+[a: 2, b: 3]
+iex(5)> for {k, v} <- my_map, into: %{}, do: {k, v + 1}
+%{a: 2, b: 3}
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Inspect}
+  Мы не раз видели в iex консоли отображание разных значений.
+  \par \bigskip
+  В том числе сложных:
+  \par \bigskip
+  \begin{lstlisting}
+iex(1)> MyCalendar.sample_event_typed_struct()
+%MyCalendar.Model.TypedStruct.Event{
+  title: "Team Meeting",
+  ...
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Inspect}
+  Это делает функция \textbf{Kernel.inspect/2}.
+  \par \bigskip
+  И это возможно потому, что все типы данных в Эликсир
+  \par \bigskip
+  реализуют протокол \textbf{Inspect}.
+  \par \bigskip
+  Каждый тип сам описывает, как он должен быть представлен.
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Inspect}
+  \textbf{Kernel.inspect} имеет настройки:
+  \par \bigskip
+  \begin{lstlisting}
+inspect(event)
+inspect(event, pretty: true)
+inspect(event, pretty: true, limit: 3)
+inspect(event, pretty: true, width: 10)
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Inspect}
+  И часто применяется при формировании логов:
+  \par \bigskip
+  \begin{lstlisting}
+require Logger
+Logger.info("my event is #{inspect(event)}")
+Logger.info("my event is #{
+  inspect(event, pretty: true, width: 10)}")
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Inspect}
+  Протокол \textbf{Inspect} по-умолчанию работает для любых данных.
+  \par \bigskip
+  Но его можно явно переопределить для своих данных.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Inspect}
+  Например, если мы не хотим, чтобы приватные данные:
+  \par \bigskip
+  пароли, ключи, сертификаты,
+  \par \bigskip
+  отображались в консоли и попадали в логи.
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Inspect}
+  Допустим, у нас есть структура \textbf{AuthData},
+  \par \bigskip
+  содержащая логин и пароль:
+  \par \bigskip
+  \begin{lstlisting}
+defmodule Model.AuthData do
+  defstruct [:login, :password]
+end
+
+iex(1)> ad = %Model.AuthData{login: "bob", password: "pass"}
+%Model.AuthData{login: "bob", password: "pass"}
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Inspect}
+  С помощью атрибута \textbf{@derive} можно указать,
+  \par \bigskip
+  какие поля нужно скрывать или показывать:
+  \par \bigskip
+  \begin{lstlisting}
+defmodule Model.AuthData do
+  @derive {Inspect, except: [:password]}
+  defstruct [:login, :password]
+end
+
+iex(2)> ad = %Model.AuthData{login: "bob", password: "pass"}
+#Model.AuthData<login: "bob", ...>
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Inspect}
+  Или можно явно реализовать протокол \textbf{Inspect}:
+  \par \bigskip
+  \begin{lstlisting}
+defmodule Model.AuthData do
+  defstruct [:login, :password]
+
+  defimpl Inspect do
+    alias Inspect.Algebra, as: A
+
+    def inspect(auth_data, opts) do
+      A.concat(["#AuthData<login:", A.to_doc(auth_data.login, opts), ">"])
+    end
+  end
+end
+
+iex(3)> ad = %Model.AuthData{login: "bob", password: "pass"}
+#AuthData<login:"bob">
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}
+  \frametitle{String.Chars и List.Chars}
+  Эти два протокола позволяют конвертировать данные в строку.
+  \par \bigskip
+  \textbf{String.Chars} -- в строку в двойных кавычках,
+  \par \bigskip
+  то есть в бинарные данные в UTF8.
+  \par \bigskip
+  \textbf{List.Chars} -- в строку в одиночных кавычках,
+  \par \bigskip
+  то есть в список Unicode Codepoints.
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{String.Chars и List.Chars}
+  В отличие от Inspect, не все типы
+  \par \bigskip
+  реализуют эти протоколы по умолчанию:
+  \par \bigskip
+  \begin{lstlisting}
+iex(1)> IO.puts("here is a number: #{42}")
+here is a number: 42
+:ok
+iex(2)> IO.puts("here is a map: #{ %{a: 42} }")
+** (Protocol.UndefinedError) protocol String.Chars not implemented for %{a: 42} of type Map
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{String.Chars и List.Chars}
+  Но не трудно реализовать этот протокол для своего типа:
+  \par \bigskip
+  \begin{lstlisting}
+defmodule CharsExample do
+  defstruct [:a, :b]
+
+  defimpl String.Chars do
+    def to_string(data) do
+      "#CharsExample<a=#{inspect data.a}, b=#{inspect data.b}>"
+    end
+  end
+end
+
+iex(1)> a = %CharsExample{a: 42, b: 100}
+%CharsExample{a: 42, b: 100}
+iex(2)> IO.puts("this is CharsExample #{a}")
+this is CharsExample #CharsExample<a=42, b=100>
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{String.Chars и List.Chars}
+  И для стандартного типа:
+  \par \bigskip
+  \begin{lstlisting}
+defimpl String.Chars, for: Map do
+  def to_string(map) do
+    "#Map of size:#{map_size(map)}"
+  end
+end
+
+iex(4)> IO.puts("here is a map: #{ %{a: 42} }")
+here is a map: #Map of size:1
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Protocol vs Behaviour}
+  Protocol и Behaviour делают одно и то же.
+  \par \bigskip
+  Protocol более гибкий, Behaviour ограниченый.
+  \par \bigskip
+  Тогда зачем нужен Behaviour?
+\end{frame}
+
+\begin{frame}
+  \frametitle{Protocol vs Behaviour}
+  Behaviour нужен для совместимости с Эрланг.
+  \par \bigskip
+  Эликсир во многом опирается на код Эрланг.
+  \par \bigskip
+  Этот код зачастую требует Behaviour.
+\end{frame}
+
+\end{document}
