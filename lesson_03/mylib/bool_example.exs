@@ -4,29 +4,18 @@ defmodule BoolExample do
   https://en.wikipedia.org/wiki/Three-valued_logic
   """
 
-  def sk_not(false), do: true
   def sk_not(nil), do: nil
-  def sk_not(true), do: false
+  def sk_not(a), do: not a
 
-  def sk_and(false, false), do: false
-  def sk_and(false, nil), do: false
-  def sk_and(false, true), do: false
+  def sk_and(false, _), do: false
   def sk_and(nil, false), do: false
-  def sk_and(nil, nil), do: nil
-  def sk_and(nil, true), do: nil
-  def sk_and(true, false), do: false
-  def sk_and(true, nil), do: nil
-  def sk_and(true, true), do: true
+  def sk_and(nil, _), do: nil
+  def sk_and(true, a), do: a
 
-  def sk_or(false, false), do: false
-  def sk_or(false, nil), do: nil
-  def sk_or(false, true), do: true
-  def sk_or(nil, false), do: nil
-  def sk_or(nil, nil), do: nil
+  def sk_or(false, a), do: a
   def sk_or(nil, true), do: true
-  def sk_or(true, false), do: true
-  def sk_or(true, nil), do: true
-  def sk_or(true, true), do: true
+  def sk_or(nil, _), do: nil 
+  def sk_or(true, _), do: true
 end
 
 ExUnit.start()
