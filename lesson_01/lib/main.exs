@@ -1,12 +1,18 @@
 defmodule FizzBuzz do
+  @moduledoc """
+  FizzBuzz is a simple game.
+  """
+
   def main() do
     fizzbuzz_100() |> Enum.join(" ") |> IO.puts()
   end
 
+  @doc "fizzbuzz for all number from 1 to 100"
   def fizzbuzz_100() do
     Enum.map(1..100, &fizzbuzz/1)
   end
 
+  @doc "fizzbuzz for a single number"
   @spec fizzbuzz(integer()) :: String.t()
   def fizzbuzz(number) do
     devisible_by_3 = rem(number, 3) == 0
