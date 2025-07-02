@@ -1,5 +1,4 @@
 defmodule StringExample do
-
   def example() do
     ["a", "bb", "hello", "world", "some-long-word", "short-word"]
   end
@@ -24,7 +23,6 @@ defmodule StringExample do
   end
 end
 
-
 ExUnit.start()
 
 defmodule StringExampleTest do
@@ -43,5 +41,4 @@ defmodule StringExampleTest do
   test "align" do
     assert ["   cat  ", "  zebra ", "elephant"] == align_words(~w'cat zebra elephant')
   end
-
 end
