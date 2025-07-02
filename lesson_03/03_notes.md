@@ -5,3 +5,7 @@ Code.require_file("float_example.exs")
 
 # Дебаг через принт
 dbg()
+
+[head | tail] = list
+
+res_list = [insertinbeginning | listtoinsert]
