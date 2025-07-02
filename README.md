@@ -1,5 +1,6 @@
 to enable working lsp-elixir in windows sublime:
 `mix local.hex`
+iex.bat
 
 
 scoop install elixir

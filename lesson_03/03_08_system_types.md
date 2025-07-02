@@ -71,7 +71,7 @@ iex(42)> other_name.(42)
 ```
 
 В переменную можно сохранить и именованую функцию:
-```
+```elixir
 iex(16)> my_sort = &Enum.sort/1
 &Enum.sort/1
 iex(17)> my_sort.([5, 1, 3, 10])
@@ -79,14 +79,14 @@ iex(17)> my_sort.([5, 1, 3, 10])
 ```
 
 Передаём функцию как аргумент в другую функцию:
-```
+```elixir
 iex(25)> apply_twice = fn(f, arg) -> f.(f.(arg)) end
 iex(26)> apply_twice.(my_fun, 5)
 20
 ```
 
 Более реалистичные примеры:
-```
+```elixir
 iex(18)> even? = fn(val) -> rem(val, 2) == 0 end
 iex(19)> Enum.filter([1, 2, 3, 4, 5], even?)
 [2, 4]
@@ -107,7 +107,7 @@ number < atom < reference < function < port < pid < tuple < map < list < binary
 Это необычное поведение. В большинстве языков программирования операция сравнения имеет смысл только для значений одного типа. Но такой дизайн Эликсир принял от Эрланг.
 
 Примеры сравнения:
-```
+```elixir
 iex(27)> 42 > :ok
 false
 iex(28)> :ok > make_ref()
