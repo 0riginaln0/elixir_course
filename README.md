@@ -1,3 +1,17 @@
+to enable working lsp-elixir in windows sublime:
+`mix local.hex`
+
+
+scoop install elixir
+scoop install erlang
+
+brew install elixir
+
+ElixirSyntax
+LSP
+LSP-elixir
+
+
 # Учебный курс по языку программирования Эликсир. Часть 1.
 
 Курс рассчитан на программистов, уже владеющих каким-либо языком программирования, и желающим изучить Эликсир. Однако я верю, что он будет полезен и новичкам в программировании.
