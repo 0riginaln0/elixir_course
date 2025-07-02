@@ -7,11 +7,11 @@ defmodule Distance do
     |> :math.sqrt()
   end
 
-  def point_inside_circle?(point, {:circle, center, radius}) do
+  def point_inside_figure?(point, {:circle, center, radius}) do
     distance(point, center) <= radius
   end
 
-  def point_inside_rectangle?(
+  def point_inside_figure?(
         {:point, x, y},
         {:rectangle, {:point, nw_x, nw_y}, {:point, se_x, se_y}}
       ) do
@@ -39,10 +39,10 @@ defmodule DistanceTest do
     p4 = {:point, 0, - 16}
     c = {:circle, {:point, 5, 5}, 20}
 
-    assert point_inside_circle?(p1, c)
-    refute point_inside_circle?(p2, c)
-    assert point_inside_circle?(p3, c)
-    refute point_inside_circle?(p4, c)
+    assert point_inside_figure?(p1, c)
+    refute point_inside_figure?(p2, c)
+    assert point_inside_figure?(p3, c)
+    refute point_inside_figure?(p4, c)
   end
 
   test "point inside rectangle" do
@@ -52,9 +52,9 @@ defmodule DistanceTest do
     p4 = {:point, 0, - 16}
     r = {:rectangle, {:point, 0, 0}, {:point, 20, 20}}
 
-    assert point_inside_rectangle?(p1, r)
-    refute point_inside_rectangle?(p2, r)
-    assert point_inside_rectangle?(p3, r)
-    refute point_inside_rectangle?(p4, r)
+    assert point_inside_figure?(p1, r)
+    refute point_inside_figure?(p2, r)
+    assert point_inside_figure?(p3, r)
+    refute point_inside_figure?(p4, r)
   end
 end
