@@ -9,7 +9,7 @@
 
 Пример:
 
-```elixir-iex
+```elixir
 iex(2)> QuadraticEquation.solve(1, -2, -3)
 {:roots, 3.0, -1.0}
 

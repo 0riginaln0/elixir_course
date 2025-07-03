@@ -7,7 +7,7 @@
 - String.t -- бинарная строка
 - IO List -- включает сам себя
 
-```
+```elixir
 iex(1)> [0, 127, 255] |> IO.iodata_to_binary
 <<0, 127, 255>>
 iex(2)> [0, 127, 255, 256] |> IO.iodata_to_binary
@@ -26,7 +26,7 @@ iex(6)> [97, 98, 99, [100, 101], " Hello", [" ", "world", 33]] |> IO.iodata_to_b
 
 Не эффективно:
 
-```elixir-iex
+```elixir
 iex(1)> header = "<html><body>"
 "<html><body>"
 iex(2)> footer = "</body></html>"
@@ -45,7 +45,7 @@ iex(6)> html = header <> page <> footer
 
 Эффективно:
 
-```elixir-iex
+```elixir
 iex(7)> title = ["Hello", name, "!"]
 ["Hello", "Bob", "!"]
 iex(8)> page = ["<h1>", title, "</h1>"]
@@ -67,7 +67,7 @@ iex(10)> IO.puts(html)
 
 Это список кортежей из двух элементов, где первых элемент является ключом, а второй элемент -- значением. Ключ должен быть атомом.
 
-```
+```elixir
 iex(6)> my_dict = [{:a, 42}, {:b, 100}, {:c, 500}]
 [a: 42, b: 100, c: 500]
 iex(7)> my_dict[:a]
@@ -80,14 +80,14 @@ nil
 
 И хотя это просто список кортежей, здесь работает синтаксический сахар, похожий на словарь:
 
-```
+```elixir
 iex(11)> my_dict = [a: 42, b: 100]
 [a: 42, b: 100]
 ```
 
 Есть модуль **Keyword**, который предоставляет АПИ, похожее на АПИ словарей:
 
-```
+```elixir
 iex(12)> Keyword.fetch(my_dict, :a)
 {:ok, 42}
 iex(13)> Keyword.fetch(my_dict, :d)
@@ -96,7 +96,7 @@ iex(13)> Keyword.fetch(my_dict, :d)
 
 И со списком можно работать как с любым другим списком -- добавлять новые значения в начало:
 
-```
+```elixir
 iex(15)> my_dict = [{:c, 100} | my_dict]
 [c: 100, a: 42, b: 100]
 ```

@@ -14,7 +14,23 @@ defmodule QuadraticEquation do
   :no_roots
   """
   def solve(a, b, c) do
-    # TODO add your implementation
+    d = b * b - 4 * a * c
+
+    cond do
+      d > 0 ->
+        x1 = (-b + :math.sqrt(d)) / (2 * a)
+        x2 = (-b - :math.sqrt(d)) / (2 * a)
+        {:roots, x1, x2}
+
+      equal?(d, 0) ->
+        {:root, -(b / (2 * a))}
+
+      true ->
+        :no_roots
+    end
   end
 
+  def equal?(f1, f2, precision \\ 0.01) do
+    abs(f1 - f2) < precision
+  end
 end

@@ -22,6 +22,11 @@ defmodule WordCount do
   """
   def count(data) do
     # TODO add your implementation
+    num_symbols = String.length(data)
+    num_words = length(String.split(data))
+    num_lines = length(String.split(data, "\n"))
+
+    {num_lines, num_words, num_symbols}
   end
 
 end
