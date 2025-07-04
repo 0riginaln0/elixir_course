@@ -2,7 +2,7 @@
 
 Есть некоторые нюансы сопоставления с образцом при работе со словарями. В шаблоне не нужно перечислять все ключи, какие есть в словаре. Мы указываем только те ключи, которые нам нужны:
 
-```elixir-iex
+```elixir
 iex(4)> my_map = %{a: 1, b: 2, c: 3}
 %{a: 1, b: 2, c: 3}
 iex(5)> %{a: value} = my_map
@@ -13,7 +13,7 @@ iex(6)> value
 
 Можно извлечь несколько значений одновременно:
 
-```elixir-iex
+```elixir
 iex(2)> %{a: a_val, b: b_val} = my_map
 %{a: 1, b: 2, c: 3}
 iex(3)> a_val
@@ -24,14 +24,14 @@ iex(4)> b_val
 
 Если в словаре нет нужного ключа, то возникает исключение `MatchError`:
 
-```elixir-iex
+```elixir
 iex(7)> %{d: val} = my_map
 ** (MatchError) no match of right hand side value: %{a: 1, b: 2, c: 3}
 ```
 
 Если ключи не являются атомами, то синтаксис отличается:
 
-```elixir-iex
+```elixir
 iex(7)> my_map = %{"a" => 1, "b" => 2, "c" => 3}
 %{"a" => 1, "b" => 2, "c" => 3}
 iex(8)> %{"a" => value1} = my_map
@@ -46,7 +46,7 @@ iex(11)> value2
 
 Шаблон `%{}` совпадает с любым словарём. Это контринтуитивно, можно было бы ожидать, что этот шаблон совпадает только с пустым словарём. Этим шаблоном нельзя ничего извлечь, но можно проверить, что значение является словарём, а не чем-то иным.
 
-```elixir-iex
+```elixir
 iex(13)> %{} = my_map
 %{"a" => 1, "b" => 2, "c" => 3}
 ```
@@ -56,7 +56,7 @@ iex(13)> %{} = my_map
 
 Переменные можно использовать для извлечения значений, но не для извлечения ключей:
 
-```elixir-iex
+```elixir
 iex(15)> %{"c" => my_var} = my_map
 %{"a" => 1, "b" => 2, "c" => 3}
 iex(16)> my_var
@@ -69,7 +69,7 @@ iex(17)> %{my_var => 1} = my_map
 
 А _pin_ operator можно использовать и для ключа, и для значения:
 
-```elixir-iex
+```elixir
 iex(18)> value1
 1
 iex(19)> %{"a" => ^value1} = my_map
@@ -89,7 +89,7 @@ iex(21)> %{^keyb => _} = my_map
 
 Создадим структуру из вложенных словарей и списков:
 
-```
+```elixir
 iex(1)> book1 = %{id: 1, title: "Little Ecto Book"}
 %{id: 1, title: "Little Ecto Book"}
 iex(2)> book2 = %{id: 2, title: "Programming Ecto"}
@@ -109,7 +109,7 @@ iex(4)> library = %{topic: "Elixir", books: [book1, book2, book3]}
 
 Извлечём название 1й книги:
 
-```
+```elixir
 iex(7)> %{books: [%{title: title} | _]} = library
 iex(8)> title
 "Little Ecto Book"
@@ -117,7 +117,7 @@ iex(8)> title
 
 Извлечём id 2й книги:
 
-```
+```elixir
 iex(9)> %{books: [_, %{id: id}, _]} = library
 iex(10)> id
 2
@@ -125,7 +125,7 @@ iex(10)> id
 
 Извлечём id всех книг:
 
-```
+```elixir
 iex(11)> %{books: [%{id: id1}, %{id: id2}, %{id: id3}]} = library
 iex(12)> {id1, id2, id3}
 {1, 2, 3}
@@ -137,7 +137,7 @@ iex(12)> {id1, id2, id3}
 
 Но раз уж у нас под руками есть подходящая структура, то я покажу `get_in`.
 
-```
+```elixir
 iex(5)> get_in(library, [:books])
 [
   %{id: 1, title: "Little Ecto Book"},
