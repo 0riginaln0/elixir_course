@@ -18,7 +18,7 @@ local function update_progress()
     local new_first_line = string.format("Progress: %d/%d", completed_lessons, overall_lessons)
 
     local lines = {}
-    for line in content:gmatch("([^\r\n]*)[\r\n]?") do
+    for line in content:gmatch("([^\n]*)[\n]?") do
         table.insert(lines, line)
     end
 
