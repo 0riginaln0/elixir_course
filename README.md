@@ -1,3 +1,7 @@
+Progress: 21/54
+
+# Setup snippets
+
 to enable working lsp-elixir in windows sublime:
 `mix local.hex`
 iex.bat
@@ -11,8 +15,6 @@ brew install elixir
 ElixirSyntax
 LSP
 LSP-elixir
-
-**20/54**
 
 # Учебный курс по языку программирования Эликсир. Часть 1.
 
@@ -78,7 +80,7 @@ LSP-elixir
 
 - [x] 04.03. Конструкция case, тела функций. 
 
-- [ ] 04.03. Охранные выражения.
+- [x] 04.03. Охранные выражения.
 
 - [ ] 04.04. Конструкции cond и if.
 

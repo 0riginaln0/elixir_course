@@ -51,4 +51,59 @@ defmodule ControlFlow do
   def handle3({animal_type, name}, action) do
     IO.puts("do action '#{action}' with animal '#{inspect(animal_type)}' #{name}")
   end
+
+  def handle4(animal) do
+    case animal do
+      {:dog, name, age} when age <= 2 ->
+        IO.puts("dog #{name} is a young dog")
+
+      {:dog, name, age} ->
+        IO.puts("dog #{name} is an adult")
+
+      {:cat, name, age} when age > 10 ->
+        IO.puts("cat #{name} is an old cat")
+
+      {:cat, name, age} ->
+        IO.puts("cat #{name} is not so old")
+    end
+  end
+
+  def handle5({:dog, name, age}) when age <= 2 do
+    IO.puts("dog #{name} is a young dog")
+  end
+
+  def handle5({:dog, name, age}) do
+    IO.puts("dog #{name} is an adult")
+  end
+
+  def handle6({:library, rating, books}) when rating > 4 and length(books) > 2 do
+    IO.puts("a good library")
+  end
+
+  def handle6({:library, rating, books}) when rating > 4 or length(books) > 2 do
+    IO.puts("Not so good library")
+  end
+
+  def handle6({:library, rating, books}) do
+    IO.puts("not recommended")
+  end
+
+  # Подключает макросы, определённые в модуле Integer
+  require Integer
+
+  def handle7(a) when Integer.is_odd(a) do
+    IO.puts("#{a} is odd")
+  end
+
+  def handle7(a) when Integer.is_even(a) do
+    IO.puts("#{a} is even")
+  end
+
+  def handle8(a, b) when 10 / a > 2 do
+    {:clause_1, b}
+  end
+
+  def handle8(a, b) do
+    {:clause_2, b}
+  end
 end
