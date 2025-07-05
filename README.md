@@ -168,4 +168,3 @@ LSP-elixir
 ## Часть 2. Многопоточность и OTP.
 
 Находится [здесь](https://github.com/yzh44yzh/elixir_course_2).
-
