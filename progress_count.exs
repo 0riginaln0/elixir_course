@@ -1,5 +1,5 @@
 defmodule ProgressCount do
-	def update_progress!() do
+  def update_progress!() do
     file_path = "README.md"
     content = File.read!(file_path)
 
