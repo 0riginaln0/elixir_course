@@ -106,4 +106,32 @@ defmodule ControlFlow do
   def handle8(a, b) do
     {:clause_2, b}
   end
+
+  def handle10(num) do
+    cond do
+      num > 10 -> IO.puts("num is more than 10")
+      num > 5 -> IO.puts("num is more than 5")
+      true -> IO.puts("num is 5 or less")
+    end
+  end
+
+  def handle11(num) do
+    if num > 5 do
+      IO.puts("num is more than 5")
+    end
+  end
+
+  def fizzbuzz(n) do
+    devisible_by_3 = rem(n, 3) == 0
+    devisible_by_5 = rem(n, 5) == 0
+
+    case n do
+      _ when devisible_by_3 and devisible_by_5 -> "FizzBuzz"
+      _ when devisible_by_3 -> "Fizz"
+      _ when devisible_by_5 -> "Buzz"
+      _ -> to_string(n)
+    end
+  end
+
+  def divisible_by?(n, d), do: rem(n, d) == 0
 end
