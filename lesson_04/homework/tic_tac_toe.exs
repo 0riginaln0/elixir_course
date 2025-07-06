@@ -22,17 +22,13 @@ defmodule TicTacToe do
 
   @spec valid_cell?(cell) :: boolean
   defp valid_cell?(cell) do
-    case cell do
-      :x -> true
-      :o -> true
-      :f -> true
-      _ -> false
-    end
+    cell in [:x, :o, :f]
   end
 
   @spec check_who_win(game_state) :: game_result
   def check_who_win(state) do
     case state do
+      # Horizontal win
       {
         {w, w, w},
         {_, _, _},
@@ -57,6 +53,7 @@ defmodule TicTacToe do
       when w != :f ->
         {:win, w}
 
+      # Vertical win
       {
         {w, _, _},
         {w, _, _},
@@ -81,6 +78,7 @@ defmodule TicTacToe do
       when w != :f ->
         {:win, w}
 
+      # Diagonal win
       {
         {w, _, _},
         {_, w, _},
