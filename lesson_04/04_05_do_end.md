@@ -3,11 +3,11 @@
 Этот материал факультативный и его можно спокойно пропустить.
 
 Но если вам интересно, как работает синтаксис Эликсир, и почему в однострочном `do` есть запятая и двоеточие:
-```
+```elixir
 def my_fun(a), do: a
 ```
 а в многострочном `do` их нет:
-```
+```elixir
 def my_fun(a) do
   a
 end
@@ -158,23 +158,23 @@ end
 ```
 
 Используем однострочный `do`:
-```
+```elixir
 def some_fun_2(arg1, arg2), do: (a = 42; arg1 + arg2 + a)
 ```
 
 Добавляем квадратные скобки:
-```
+```elixir
 def( some_fun_3(arg1, arg2), [{:do, (a = 42; arg1 + arg2 + a)}] )
 ```
 
 И получаем его настоящую форму, без синтаксического сахара:
-```
+```elixir
 def(function_signature, [{:do, code_block}])
 ```
 
 И все эти формы работают одинаково:
 
-```
+```elixir
 iex(5)> DoEnd.some_fun_1(1, 2)
 45
 iex(6)> DoEnd.some_fun_2(1, 2)
@@ -185,13 +185,13 @@ iex(7)> DoEnd.some_fun_3(1, 2)
 
 Попробуем то же самое с макросом `defmodule`:
 
-```
+```elixir
 defmodule(MyModule, [{:do, (def f1(), do: 42; def f2(), do: 100)}])
 ```
 
 Это тоже работает:
 
-```
+```elixir
 iex(8)> DoEnd.MyModule.f1()
 42
 iex(9)> DoEnd.MyModule.f2()
