@@ -24,8 +24,8 @@ defmodule Recursion do
   end
 
   def set_value_via_enum(list, position, value) do
-    {left, right} = Enum.split(list, position)
-    Enum.concat([left, [value], Enum.drop(right, 1)])
+    {left, [_ | right]} = Enum.split(list, position)
+    left ++ [value | right]
   end
 
   def set_value(list, position, value) do
