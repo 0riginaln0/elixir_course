@@ -23,4 +23,10 @@ defmodule MyList do
     # TODO add your implementation
   end
 
+  def flatten_e([]), do: []
+
+  def flatten_e([head | tail]), do: flatten_e(head) ++ flatten_e(tail)
+
+  def flatten_e(item), do: [item]
+
 end

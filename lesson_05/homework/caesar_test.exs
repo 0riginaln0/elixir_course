@@ -9,21 +9,21 @@ defmodule CaesarTest do
     assert encode("Hello", 10) |> decode(10) == "Hello"
     assert encode("12345", 1) == "23456"
     assert decode("12345", 1) == "01234"
-    assert encode('abcdef', 2) == 'cdefgh'
-    assert decode('abcdef', 2) == '_`abcd'
+    assert encode(~c"abcdef", 2) == ~c"cdefgh"
+    assert decode(~c"abcdef", 2) == ~c"_`abcd"
   end
 
   test "encode/decode with cyrillic symbols" do
     assert encode("Привет", 10) |> decode(10) == "Привет"
-    assert encode('Привет мир', 500) |> decode(500) == 'Привет мир'
+    assert encode(~c"Привет мир", 500) |> decode(500) == ~c"Привет мир"
   end
 
   test "encode/decode ascii" do
     assert encode_ascii("Hello", 10) |> decode_ascii(10) == "Hello"
     assert encode_ascii("12345", 1) == "23456"
     assert decode_ascii("23456", 1) == "12345"
-    assert encode_ascii('abcdef', 2) == 'cdefgh'
-    assert decode_ascii('cdefgh', 2) == 'abcdef'
+    assert encode_ascii(~c"abcdef", 2) == ~c"cdefgh"
+    assert decode_ascii(~c"cdefgh", 2) == ~c"abcdef"
   end
 
   test "encode ascii with wrapping" do

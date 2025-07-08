@@ -8,7 +8,7 @@
 
 Пример:
 
-```elixir-iex
+```elixir
 > Caesar.encode("Hello", 10)
 "Rovvy"
 > Caesar.encode('Hello', 5)
@@ -19,7 +19,7 @@
 
 Пример:
 
-```elixir-iex
+```elixir
 > Caesar.decode("Rovvy", 10)
 "Hello"
 > Caesar.decode('Mjqqt', 5)
@@ -38,7 +38,7 @@
 
 Пример:
 
-```elixir-iex
+```elixir
 > Caesar.encode_ascii('hello world', 15)
 'wt{{~/\'~\"{s'
 ```
@@ -47,7 +47,7 @@
 
 Пример:
 
-```elixir-iex
+```elixir
 > Caesar.decode_ascii('wt{{~/\'~\"{s', 15)
 hello world'
 ```
@@ -73,7 +73,7 @@ raise "invalid ascii str"
 
 Пример:
 
-```elixir-iex
+```elixir
 > List.flatten([1, [2, 3], 4, [5, [6, 7, [8, 9, 10]]]])
 [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 ```

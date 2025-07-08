@@ -1,9 +1,9 @@
 defmodule Caesar do
-
   # We consider only chars in range 32 - 126 as valid ascii chars
   # http://www.asciitable.com/
   @min_ascii_char 32
   @max_ascii_char 126
+  @ascii_range @max_ascii_char - @min_ascii_char + 1
 
   @doc """
   Function shifts forward all characters in string. String could be double-quoted or single-quoted.
@@ -14,8 +14,15 @@ defmodule Caesar do
   iex> Caesar.encode('Hello', 5)
   'Mjqqt'
   """
-  def encode(str, code) do
-    # TODO add your implementation
+  def encode(str, code) when is_bitstring(str) do
+    str
+    |> String.to_charlist()
+    |> encode(code)
+    |> List.to_string()
+  end
+
+  def encode(str, code) when is_list(str) do
+    Enum.map(str, fn letter -> letter + code end)
   end
 
   @doc """
@@ -27,8 +34,15 @@ defmodule Caesar do
   iex> Caesar.decode('Mjqqt', 5)
   'Hello'
   """
-  def decode(str, code) do
-    # TODO add your implementation
+  def decode(str, code) when is_bitstring(str) do
+    str
+    |> String.to_charlist()
+    |> decode(code)
+    |> List.to_string()
+  end
+
+  def decode(str, code) when is_list(str) do
+    Enum.map(str, fn letter -> letter - code end)
   end
 
   @doc ~S"""
@@ -40,8 +54,34 @@ defmodule Caesar do
   iex> Caesar.encode_ascii('hello world', 15)
   'wt{{~/\'~\"{s'
   """
-  def encode_ascii(str, code) do
-    # TODO add your implementation
+  def encode_ascii(str, code) when is_bitstring(str) do
+    str
+    |> String.to_charlist()
+    |> encode_ascii(code)
+    |> List.to_string()
+  end
+
+  def encode_ascii(str, code) when is_list(str) do
+    effective_code = rem(code, @ascii_range)
+
+    Enum.map(str, fn letter ->
+      valid_ascii!(letter)
+      wrap_shifted_char(letter + effective_code)
+    end)
+  end
+
+  def valid_ascii!(letter) do
+    if letter < @min_ascii_char or letter > @max_ascii_char do
+      raise "invalid ascii str"
+    end
+  end
+
+  defp wrap_shifted_char(shifted_char) do
+    cond do
+      shifted_char > @max_ascii_char -> shifted_char - @ascii_range
+      shifted_char < @min_ascii_char -> shifted_char + @ascii_range
+      true -> shifted_char
+    end
   end
 
   @doc ~S"""
@@ -53,8 +93,19 @@ defmodule Caesar do
   iex> Caesar.decode_ascii('wt{{~/\'~\"{s', 15)
   'hello world'
   """
-  def decode_ascii(str, code) do
-    # TODO add your implementation
+  def decode_ascii(str, code) when is_bitstring(str) do
+    str
+    |> String.to_charlist()
+    |> decode_ascii(code)
+    |> List.to_string()
   end
 
+  def decode_ascii(str, code) when is_list(str) do
+    effective_code = rem(code, @ascii_range)
+
+    Enum.map(str, fn letter ->
+      valid_ascii!(letter)
+      wrap_shifted_char(letter - effective_code)
+    end)
+  end
 end
