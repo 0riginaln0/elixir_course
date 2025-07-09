@@ -49,6 +49,7 @@ defmodule Trim do
 
   def effective_trim(str) when is_list(str) do
     # Lets trim string with less than 4 iterations
+    # Spoiler, this function trims string with full 2 iterations in the worst case.
     acc = %{
       found_first_non_space_index: false,
       first_non_space_index: -1,
@@ -89,8 +90,7 @@ defmodule Trim do
     case first_non_space_index..last_non_space_index do
       # str contains of spaces only
       -1..-1 -> ~c""
-      # And this Enum.slice is the second (third?) iteration. I'm not sure how it's implemented.
-      # Nevertheless, 3 < 4. Victory!
+      # And this Enum.slice is the second iteration.
       range -> Enum.slice(str, range)
     end
   end
