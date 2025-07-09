@@ -1,4 +1,4 @@
-Progress: 29/54
+Progress: 32/54
 
 # Setup snippets
 
@@ -104,11 +104,11 @@ LSP-elixir
 
 ### Урок №6. Функции высшего порядка.
 
-- [ ] 06.01. Map, Filter.
+- [x] 06.01. Map, Filter.
 
-- [ ] 06.02. Reduce (Fold).
+- [x] 06.02. Reduce (Fold).
 
-- [ ] 06.03. Модуль Enum.
+- [x] 06.03. Модуль Enum.
 
 - [ ] 06.04. Конструкторы списков.
 
