@@ -12,7 +12,7 @@
 
 Возьмем некую коллекцию и прогоним ее через цепочку функций:
 
-```elixir-eix
+```elixir
 iex(3)> [1, 2, 3, 4, 5] |>
 ...(3)> Enum.map(&(&1 * &1)) |>
 ...(3)> Enum.zip([:a, :b, :c, :d, :e]) |>
@@ -24,7 +24,7 @@ iex(3)> [1, 2, 3, 4, 5] |>
 
 Теперь сделаем тоже самое с модулем Stream:
 
-```elixir-eix
+```elixir
 iex(4)> [1, 2, 3, 4, 5] |>
 ...(4)> Stream.map(&(&1 * &1)) |>
 ...(4)> Stream.zip([:a, :b, :c, :d, :e]) |>
@@ -35,7 +35,7 @@ iex(4)> [1, 2, 3, 4, 5] |>
 
 Результат получился тот же. Обратите внимание, что в конце цепочки мы добавили Enum.to_list. Этот вызов является энергичным вычислением, и именно он запускает всю цепочку. Без него результат будет таким:
 
-```elixir-eix
+```elixir
 iex(5)> [1, 2, 3, 4, 5] |>
 ...(5)> Stream.map(&(&1 * &1)) |>
 ...(5)> Stream.zip([:a, :b, :c, :d, :e]) |>
@@ -48,7 +48,7 @@ iex(5)> [1, 2, 3, 4, 5] |>
 
 Это некая структура данных, хранящее ленивое вычисление, которое пока еще не запустилось.
 
-```elixir-eix
+```elixir
 iex(9)> lazy_computation = [1, 2, 3, 4, 5] |>
 ...(9)> Stream.map(&(&1 * &1)) |>
 ...(9)> Stream.zip([:a, :b, :c, :d, :e]) |>
@@ -72,14 +72,14 @@ iex(10)> Enum.to_list(lazy_computation)
 
 Если мы создадим список из 10 миллионов элементов, то такой список займет много памяти и будет долго обрабатываться. Даже если нам нужны не все эти элементы, а лишь небольшая их часть:
 
-```elixir-eix
+```elixir
 iex(14)> Enum.map(1..10_000_000, &(&1 + 1)) |> Enum.take(5)
 [2, 3, 4, 5, 6]
 ```
 
 Нам нужны только первые 5 элементов, но вычисление заняло несколько секунд.
 
-```elixir-eix
+```elixir
 iex> Stream.map(1..10_000_000, &(&1+1)) |> Enum.take(5)
 [2, 3, 4, 5, 6]
 ```
@@ -105,7 +105,7 @@ UUID: universally unique identifier
 
 Мы хотим найти в нем самый длинный термин:
 
-```elixir-eix
+```elixir
 def find_longest(file) do
   File.read!(file)
   |> String.split("\n")
@@ -120,7 +120,7 @@ end
 
 Воспользуемся Stream:
 
-```elixir-eix
+```elixir
 def find_longest_lazy(file) do
   File.stream!(file)
   |> Stream.map(fn(line) -> String.split(line, ":") end)
@@ -144,7 +144,7 @@ end
 
 `Stream.cycle/1` принимает на вход коллекцию и генерирует бесконечную коллецию, состоящую из повторения элементов исходной:
 
-```elixir-eix
+```elixir
 iex(9)> Stream.cycle([1, 2, 3]) |> Enum.take(20)
 [1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2]
 ```
@@ -177,7 +177,7 @@ end
 
 `Stream.iterate/2` принимает некое начальное значение и функцию, которая будет генирировать новое значение. На каждой итерации эта функция принимает свой предыдущий результат и на его основе генерирует новый результат:
 
-```
+```elixir
 iex(3)> iterator = Stream.iterate(1, fn arg -> arg * 2 end)
 #Function<63.53678557/2 in Stream.unfold/2>
 iex(4)> iterator |> Enum.take(10)
@@ -186,7 +186,7 @@ iex(4)> iterator |> Enum.take(10)
 
 Сделаем таблицу посложнее -- к чередованию фона ещё добавим нумерацию рядов:
 
-```
+```elixir
 def make_table_2(data) do
   css_styles = Stream.cycle(["white_bg", "gray_bg"])
   iterator = Stream.iterate(1, fn a -> a + 1 end)
@@ -226,7 +226,7 @@ Enum.reduce(collection, folder)
 
 Пример, как генерируются значения:
 
-```
+```elixir
 def make_table_3() do
   initial_state = {true, 1}
 
@@ -256,7 +256,7 @@ iex(4)> Lazy.make_table_2() |> Enum.take(10)
 
 Применим опять для создания таблицы:
 
-```
+```elixir
 def test_data do
   [
     {"Bob", 24},

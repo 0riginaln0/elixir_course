@@ -29,10 +29,14 @@ defmodule Lazy do
   end
 
   def make_table(data) do
-    styles = Stream.cycle([
-      ~s|style="background-color: #ffffff;"|, # white
-      ~s|style="background-color: #f2f2f2;"|, # gray
+    styles =
+      Stream.cycle([
+        # white
+        ~s|style="background-color: #ffffff;"|,
+        # gray
+        ~s|style="background-color: #f2f2f2;"|
       ])
+
     iterator = Stream.iterate(1, fn i -> i + 1 end)
 
     rows =
@@ -42,6 +46,43 @@ defmodule Lazy do
         """
         <tr #{style}>
           <td>#{index}</td>
+          <td>#{name}</td>
+          <td>#{age}</td>
+        </tr>
+        """
+      end)
+      |> Enum.join("\n")
+
+    """
+    <table style="border-collapse: collapse; text-align: center;" border="1" cellpadding="6">
+    #{rows}
+    </table>
+    """
+  end
+
+  def make_table_2(users) do
+    initial_state = {true, 1}
+
+    unfolder = fn {odd, index} ->
+      value = %{odd: odd, index: index}
+      new_state = {not odd, index + 1}
+      {value, new_state}
+    end
+
+    rows =
+      Stream.unfold(initial_state, unfolder)
+      |> Stream.zip(users)
+      |> Enum.map(fn {state, user} ->
+        style =
+          if state.odd,
+            do: ~s|style="background-color: #ffffff;"|,
+            else: ~s|style="background-color: #f2f2f2;"|
+
+        {name, age} = user
+
+        """
+        <tr #{style}>
+          <td>#{state.index}</td>
           <td>#{name}</td>
           <td>#{age}</td>
         </tr>
