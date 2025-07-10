@@ -6,7 +6,7 @@
 
 Пример map:
 
-```elixir-iex
+```elixir
 > users
 [
   {:user, 1, "Bob", 23},
@@ -20,7 +20,7 @@
 
 Пример filter:
 
-```elixir-iex
+```elixir
 > for {:user, _id, _name, age} = user <- users, age > 16, do: user
 [{:user, 1, "Bob", 23}, {:user, 2, "Helen", 20}]
 
@@ -30,14 +30,14 @@
 
 Конструкторы списков позволяют объединять map и filter в одном проходе:
 
-```elixir-iex
+```elixir
 > for {:user, _id, name, age} <- users, age > 16, do: name
 ["Bob", "Helen"]
 ```
 
 Конструкторы списков позволяют обрабатывать несколько списков одновременно:
 
-```elixir-iex
+```elixir
 > list_1 = [1, 2, 3, 4]
 > list_2 = [:a, :b, :c]
 > for x <- list_1, y <- list_2, do: {x, y}
@@ -55,7 +55,7 @@
 
 Ну, и, конечно, все эти списки можно фильтровать:
 
-```elixir-iex
+```elixir
 > for x <- list_1, y <- list_2, z <- list_3, x > 2, y != :b, do: {x, y, z}
 [
   {3, :a, "hello"},
@@ -85,7 +85,7 @@ pattern <- collection
 
 Коллекция может быть любой структурой данных, реализующей протокол Enumerable. Каждый элемент коллекции сопоставляется с шаблоном, и если не происходит совпадения, то этот элемент отбрасывается.
 
-```elixir-iex
+```elixir
 > animals = [{:cat, "Cat A"}, {:dog, "Dog B"}, {:cat, "Cat C"}, {:dog, "Dog E"}]
 [cat: "Cat A", dog: "Dog B", cat: "Cat C", dog: "Dog E"]
 > for {:cat, name} <- animals, do: name
@@ -96,7 +96,7 @@ pattern <- collection
 
 `into` позволяет добавить результ генератора списка в существующую коллецию. Это может быть полезно, например, для map:
 
-```elixir-iex
+```elixir
 > data = %{a: 1, b: 2}
 %{a: 1, b: 2}
 > for {k, v} <- [{:c, 3}, {:d, 4}, {:cat, "Cat A"}, :boom], into: data, do: {k, v}
@@ -107,7 +107,7 @@ pattern <- collection
 
 Для примера выведем таблицу умножения:
 
-```elixir-iex
+```elixir
 > for x <- 1..5, y <- 1..5, do: {x, y, x * y}
 
 > for x <- 1..5, y <- 1..5, do: "#{x} * #{y} = #{x * y}"
@@ -126,7 +126,7 @@ pattern <- collection
 
 Берем список всех возможных длин:
 
-```elixir-iex
+```elixir
 > max_length = 20
 20
 > lengthes = 1..max_length
@@ -134,7 +134,7 @@ pattern <- collection
 
 И генерируем все возможные сочетания длин:
 
-```elixir-iex
+```elixir
 > for x <- lengthes, y <- lengthes, z <- lengthes, do: {x, y, z}
 [
   {1, 1, 1},
@@ -143,7 +143,7 @@ pattern <- collection
 
 Промежуточный результат получится очень большой, но это не важно. Дальше его нужно отфильтровать.
 
-```elixir-iex
+```elixir
 > for x <- lengthes, y <- lengthes, z <- lengthes, x * x + y * y == z * z, do: {x, y, z}
 [
   {3, 4, 5},
@@ -163,7 +163,7 @@ pattern <- collection
 
 Хорошо бы еще устранить дубликаты. Для этого добавим еще один фильтр.
 
-```elixir-iex
+```elixir
 > for x <- lengthes, y <- lengthes, z <- lengthes,
 > x < y,
 > x * x + y * y == z * z,
