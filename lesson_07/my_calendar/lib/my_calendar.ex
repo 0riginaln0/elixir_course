@@ -1,0 +1,65 @@
+defmodule MyCalendar do
+  @moduledoc """
+  Meeting:
+    - place
+    - time
+    - participants
+    - agenda
+
+    - place: Office #1, 7th floor, room #1
+    - time: 11 Jule 2025 15:00
+    - participants: Vasya, Petya, Lena
+    - agenda: interview candidate, discuss tomorrow weather.
+
+  Tuples, Lists
+  Dicts,
+  Structs,
+  Typed structs
+
+  """
+
+  def sample_event_tuple() do
+    alias MyCalendar.Model.EventTuple, as: T
+
+    place = T.Place.new("Office #1", "Room 42")
+    time = ~U[2025-07-11 15:00:00Z]
+
+    participants = [
+      T.Participant.new("Bob", :project_manager),
+      T.Participant.new("Petya", :developer),
+      T.Participant.new("Kate", :qa),
+      T.Participant.new("Helen", :devops)
+    ]
+
+    agenda = [
+      T.Topic.new("Interview", "candidate for developer position"),
+      T.Topic.new("Weather", "discuss tomorrow weather"),
+      T.Topic.new("COokies", "what to buy")
+    ]
+
+    T.Event.new("Weekly Team Meeting", place, time, participants, agenda)
+  end
+
+  def sample_event_map() do
+    alias MyCalendar.Model.EventMap, as: M
+
+    place = M.Place.new("Office #1", "Room 42")
+    time = ~U[2025-07-11 15:00:00Z]
+
+    participants = [
+      M.Participant.new("Bob", :project_manager),
+      M.Participant.new("Petya", :developer),
+      M.Participant.new("Kate", :qa),
+      M.Participant.new("Helen", :devops)
+    ]
+
+    agenda = [
+      M.Topic.new("Interview", "candidate for developer position"),
+      M.Topic.new("Weather", "discuss tomorrow weather"),
+      M.Topic.new("COokies", "what to buy")
+    ]
+
+    M.Event.new("Weekly Team Meeting", place, time, participants, agenda)
+  end
+
+end
