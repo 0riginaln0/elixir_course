@@ -1,9 +1,9 @@
 defmodule WorldChamp do
-
   def sample_champ() do
     [
       {
-        :team, "Crazy Bulls",
+        :team,
+        "Crazy Bulls",
         [
           {:player, "Big Bull", 22, 545, 99},
           {:player, "Small Bull", 18, 324, 95},
@@ -16,7 +16,8 @@ defmodule WorldChamp do
         ]
       },
       {
-        :team, "Cool Horses",
+        :team,
+        "Cool Horses",
         [
           {:player, "Lazy Horse", 21, 423, 80},
           {:player, "Sleepy Horse", 23, 101, 35},
@@ -29,7 +30,8 @@ defmodule WorldChamp do
         ]
       },
       {
-        :team, "Fast Cows",
+        :team,
+        "Fast Cows",
         [
           {:player, "Flash Cow", 18, 56, 34},
           {:player, "Cow Bow", 28, 89, 90},
@@ -42,7 +44,8 @@ defmodule WorldChamp do
         ]
       },
       {
-        :team, "Fury Hens",
+        :team,
+        "Fury Hens",
         [
           {:player, "Ben The Hen", 57, 403, 83},
           {:player, "Hen Hen", 20, 301, 56},
@@ -55,7 +58,8 @@ defmodule WorldChamp do
         ]
       },
       {
-        :team, "Extinct Monsters",
+        :team,
+        "Extinct Monsters",
         [
           {:player, "T-Rex", 21, 999, 99},
           {:player, "Velociraptor", 29, 656, 99},
@@ -70,18 +74,62 @@ defmodule WorldChamp do
     ]
   end
 
+  @doc """
+  Returns {num_players, sum_age, sum_rating} of the team
+  """
+  def get_players_data_from_team({:team, _, players}) do
+    players
+    |> Enum.reduce({0, 0, 0}, fn {:player, _, age, rating, _},
+                                 {num_players, sum_age, sum_rating} ->
+      {num_players + 1, sum_age + age, sum_rating + rating}
+    end)
+  end
 
   def get_stat(champ) do
-    # TODO add your implementation
+    {num_teams, num_players, sum_age, sum_rating} =
+      champ
+      |> Enum.reduce({0, 0, 0, 0}, fn team, {num_teams, num_players, sum_age, sum_rating} ->
+        {team_num_players, team_sum_age, team_sum_rating} = get_players_data_from_team(team)
+
+        {num_teams + 1, num_players + team_num_players, sum_age + team_sum_age,
+         sum_rating + team_sum_rating}
+      end)
+
+    {num_teams, num_players, sum_age / num_players, sum_rating / num_players}
   end
 
+  @doc """
+  Filters out ill players and decides on the admission of the team to participate in competition.
+  """
+  def examine_team({:team, name, players}) do
+    healthy_players =
+      Enum.filter(players, fn {:player, _, _, _, health} ->
+        health >= 50
+      end)
+
+    if length(healthy_players) >= 5 do
+      {:allowed, {:team, name, healthy_players}}
+    else
+      {:not_allowed, {:team, name, healthy_players}}
+    end
+  end
 
   def examine_champ(champ) do
-    # TODO add your implementation
+    champ
+    |> Enum.reduce([], fn team, acc ->
+      case examine_team(team) do
+        {:allowed, examined_team} -> [examined_team | acc]
+        {:not_allowed, _} -> acc
+      end
+    end)
+    |> Enum.reverse()
   end
 
-  def make_pairs(team1, team2) do
-    # TODO add your implementation
+  def make_pairs({:team, _, players1}, {:team, _, players2}) do
+    for {:player, name1, _, rating1, _} <- players1,
+        {:player, name2, _, rating2, _} <- players2,
+        rating1 + rating2 > 600 do
+      {name1, name2}
+    end
   end
-
 end

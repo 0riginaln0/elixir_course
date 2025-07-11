@@ -25,9 +25,6 @@ defmodule CodeStatTest do
       "Python" => %{files: 1, lines: 2, size: 13},
       "JavaScript" => %{files: 1, lines: 3, size: 32},
       "SQL" => %{files: 1, lines: 1, size: 3},
-      "JSON" => %{files: 0, lines: 0, size: 0},
-      "Web" => %{files: 0, lines: 0, size: 0},
-      "Scripts" => %{files: 0, lines: 0, size: 0},
       "Configs" => %{files: 1, lines: 1, size: 11},
       "Docs" => %{files: 2, lines: 4, size: 32},
       "Other" => %{files: 2, lines: 2, size: 34}
@@ -51,8 +48,8 @@ defmodule CodeStatTest do
     File.write!(tmp_dir <> "/cc2.yaml", "some config")
     File.write!(tmp_dir <> "/cc3.md", "doc3\nbla-bla-bla")
     File.write!(tmp_dir <> "/cc4.md", "doc4\nbla-bla-bla")
-    File.write!(tmp_dir <> "/cc5.png", "binary image")
-    File.write!(tmp_dir <> "/file", "file without extention")
+                                                File.write!(tmp_dir <> "/cc5.png", "binary image")
+                                          File.write!(tmp_dir <> "/file", "file without extention")
     File.write!(tmp_dir <> "/cc6.log", "some log record")
   end
 end
