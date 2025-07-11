@@ -25,7 +25,7 @@ defmodule CodeStat do
   end
 
   def get_file_type(path) do
-    Enum.find(@types, fn {_type_name, type_extensions} ->
+    Enum.find(@types, {"Other", []}, fn {_type_name, type_extensions} ->
       Enum.any?(type_extensions, fn type_extension ->
         String.ends_with?(path, type_extension)
       end)
@@ -33,27 +33,16 @@ defmodule CodeStat do
   end
 
   def analyze_file!(acc, path) do
-    case get_file_type(path) do
-      {type, _} ->
-        %{files: type_files, lines: type_lines, size: type_size} =
-          Map.get(acc, type, %{files: 0, lines: 0, size: 0})
+    {type, _} = get_file_type(path)
 
-        Map.put(acc, type, %{
-          files: type_files + 1,
-          lines: type_lines + (File.read!(path) |> String.split("\n") |> length()),
-          size: type_size + File.stat!(path).size
-        })
+    %{files: type_files, lines: type_lines, size: type_size} =
+      Map.get(acc, type, %{files: 0, lines: 0, size: 0})
 
-      _ ->
-        %{files: type_files, lines: type_lines, size: type_size} =
-          Map.get(acc, "Other", %{files: 0, lines: 0, size: 0})
-
-        Map.put(acc, "Other", %{
-          files: type_files + 1,
-          lines: type_lines + (File.read!(path) |> String.split("\n") |> length()),
-          size: type_size + File.stat!(path).size
-        })
-    end
+    Map.put(acc, type, %{
+      files: type_files + 1,
+      lines: type_lines + (File.read!(path) |> String.split("\n") |> length()),
+      size: type_size + File.stat!(path).size
+    })
   end
 
   def ignore?(path) do
