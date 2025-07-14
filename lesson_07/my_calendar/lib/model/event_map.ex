@@ -1,4 +1,4 @@
-defmodule MyCalendar.Model.EventMap do
+defmodule Model.EventMap do
   # Meeting:
   # - place
   # - time

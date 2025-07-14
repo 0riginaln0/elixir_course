@@ -19,7 +19,7 @@ defmodule MyCalendar do
   """
 
   def sample_event_tuple() do
-    alias MyCalendar.Model.EventTuple, as: T
+    alias Model.EventTuple, as: T
 
     place = T.Place.new("Office #1", "Room 42")
     time = ~U[2025-07-11 15:00:00Z]
@@ -41,7 +41,7 @@ defmodule MyCalendar do
   end
 
   def sample_event_map() do
-    alias MyCalendar.Model.EventMap, as: M
+    alias Model.EventMap, as: M
 
     place = M.Place.new("Office #1", "Room 42")
     time = ~U[2025-07-11 15:00:00Z]
@@ -62,4 +62,34 @@ defmodule MyCalendar do
     M.Event.new("Weekly Team Meeting", place, time, participants, agenda)
   end
 
+  def sample_event_struct() do
+    alias Model.EventStruct, as: S
+
+    place = %S.Place{office: "Office #1", room: "Room 42"}
+    time = ~U[2025-07-11 15:00:00Z]
+
+    participants = [
+      %S.Participant{name: "Bob", role: :project_manager},
+      %S.Participant{name: "Petya", role: :developer},
+      %S.Participant{name: "Kate", role: :qa},
+      %S.Participant{name: "Helen", role: :devops}
+    ]
+
+    agenda = [
+      %S.Topic{
+        title: "Interview",
+        description: "candidate for developer position",
+        priority: :high
+      },
+      %S.Topic{title: "Weather", description: "discuss tomorrow weather"}
+    ]
+
+    %S.Event{
+      title: "Weekly Team Meeting",
+      place: place,
+      time: time,
+      participants: participants,
+      agenda: agenda
+    }
+  end
 end

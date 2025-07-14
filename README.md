@@ -1,4 +1,4 @@
-Progress: 36/54
+Progress: 37/54
 
 # Setup snippets
 
@@ -121,7 +121,7 @@ LSP-elixir
 
 - [x] 07.02. Использование Map.
 
-- [ ] 07.03. Использование Struct.
+- [x] 07.03. Использование Struct.
 
 - [ ] 07.04. Struct с указанием типов.
 
