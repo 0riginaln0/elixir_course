@@ -19,7 +19,6 @@ defmodule Model.EventTuple do
     def new(name, role) do
       {:participant, name, role}
     end
-
   end
 
   defmodule Topic do

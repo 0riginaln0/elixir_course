@@ -21,8 +21,9 @@ defmodule Model.EventStruct do
     end
 
     @impl true
-    def pop(_data, _key) do
+    def pop(data, _key) do
       # TODO
+      data
     end
   end
 
