@@ -127,4 +127,14 @@ defmodule MyCalendar do
 
     event
   end
+
+  def sample_calendar() do
+    alias Model.Calendar
+
+    %Calendar{items: []}
+    |> Calendar.add_item(sample_event_map())
+    |> Calendar.add_item(sample_event_struct())
+    |> Calendar.add_item(sample_event_tuple())
+    |> Calendar.add_item(sample_event_typed_struct())
+  end
 end

@@ -37,6 +37,8 @@ defmodule Model.EventMap do
   end
 
   defmodule Event do
+    alias Model.CalendarItem
+
     def new(title, place, time, participants, agenda) do
       %{
         title: title,
@@ -54,6 +56,14 @@ defmodule Model.EventMap do
         [],
         fn participants -> [participant | participants] end
       )
+    end
+
+    defimpl CalendarItem, for: Map do
+      @spec get_title(CalendarItem.t()) :: String.t()
+      def get_title(item), do: Map.get(item, :title, "No Title")
+
+      @spec get_time(CalendarItem.t()) :: DateTime.t()
+      def get_time(item), do: Map.get(item, :time)
     end
   end
 

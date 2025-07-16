@@ -2,7 +2,7 @@
 
 Мы уже знаем, что модуль Enum работает с самыми разными коллециями: List, Map, String, Range и другими.
 
-```elixir-iex
+```elixir
 iex(1)> Enum.map([1, 2, 3], fn i -> i * 2 end)
 [2, 4, 6]
 
@@ -18,7 +18,7 @@ iex(5)> Enum.map(%{a: 1, b: 2}, fn {k, v} -> {v, k} end)
 
 Это можно было бы реализовать примерно так:
 
-```
+```elixir
 defmodule Enum do
 
   def map(collection, f) when is_list(collection), do: ...
@@ -52,7 +52,7 @@ do
 Модуль будет очень простым -- он умеет принимать события, хранить их в списке и как-то отображать.
 
 
-```
+```elixir
 defmodule MyCalendar.Model do
   defmodule Calendar do
     alias MyCalendar.Model.CalendarItem
@@ -80,7 +80,7 @@ end
 
 События реализованы на разных структурах данных, но модуль Calendar будет работать с ними через протокол CalendarItem, который мы опишем так:
 
-```
+```elixir
   defprotocol CalendarItem do
     @spec get_title(CalendarItem.t()) :: String.t()
     def get_title(item)
@@ -129,7 +129,7 @@ defmodule MyCalendar.Model do
 
 И теперь Calendar может работать с ними:
 
-```elixir-iex
+```elixir
 defmodule MyCalendar do
   ...
   def sample_calendar() do

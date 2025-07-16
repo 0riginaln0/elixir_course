@@ -28,8 +28,18 @@ defmodule Model.EventTuple do
   end
 
   defmodule Event do
+    alias Model.CalendarItem
+
     def new(title, place, time, participants, agenda) do
       {:event, title, place, time, participants, agenda}
+    end
+
+    defimpl CalendarItem, for: Tuple do
+      @spec get_title(CalendarItem.t()) :: String.t()
+      def get_title({:event, title, _, _, _, _}), do: title
+
+      @spec get_time(CalendarItem.t()) :: DateTime.t()
+      def get_time({:event, _, _, time, _, _}), do: time
     end
   end
 end
