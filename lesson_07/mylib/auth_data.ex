@@ -1,6 +1,6 @@
 defmodule AuthData do
   #@derive {Inspect, except: [:password]}
-	defstruct [:login, :password] 
+	defstruct [:login, :password]
 
   defimpl Inspect do
     alias Inspect.Algebra, as: A
@@ -14,6 +14,5 @@ defmodule AuthData do
     def to_string(data) do
       "AuthData, login: #{data.login}"
     end
-
   end
 end
