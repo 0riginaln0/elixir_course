@@ -6,7 +6,7 @@
 
 Определяется макросом `defstruct`, передаётся список полей. Каждая структура завёрнута в отдельный модуль:
 
-```
+```elixir
 defmodule MyCalendar.Model.Struct do
   defmodule Place do
     defstruct [:office, :room]
@@ -18,7 +18,7 @@ end
 
 Создаём экземпляр:
 
-```
+```elixir
 iex(3)> my_place = %MyCalendar.Model.Struct.Place{office: "Office #1", room: "1"}
 %MyCalendar.Model.Struct.Place{office: "Office #1", room: "1"}
 ```
@@ -27,7 +27,7 @@ iex(3)> my_place = %MyCalendar.Model.Struct.Place{office: "Office #1", room: "1"
 
 Нередко имена таких модулей получаются слишком длинными, так что удобнее использовать alias:
 
-```
+```elixir
 iex(6)> alias MyCalendar.Model.Struct.Place
 MyCalendar.Model.Struct.Place
 iex(7)> other_place = %Place{office: "Office #2", room: "42"}
@@ -35,7 +35,7 @@ iex(7)> other_place = %Place{office: "Office #2", room: "42"}
 ```
 
 Мы можем указать значения по-умолчанию для полей:
-```
+```elixir
   defmodule Topic do
     defstruct [
       :subject,
@@ -47,7 +47,7 @@ iex(7)> other_place = %Place{office: "Office #2", room: "42"}
 
 И тогда экземпляр можно создать не указывая все поля:
 
-```
+```elixir
 iex(4)> alias MyCalendar.Model.Struct.Topic
 MyCalendar.Model.Struct.Topic
 iex(5)> topic = %Topic{subject: "Interview", description: "Job Interview"}
@@ -65,7 +65,7 @@ iex(6)> topic = %Topic{subject: "Interview", description: "Job Interview", prior
 ```
 
 На самом деле значение по умолчанию есть у всех полей, так что можно никакие поля не указывать:
-```
+```elixir
 %MyCalendar.Model.Struct.Topic{
   subject: nil,
   priority: :medium,
@@ -77,7 +77,7 @@ iex(6)> topic = %Topic{subject: "Interview", description: "Job Interview", prior
 
 И это не всегда хорошо. Часто бывает необходимо сделать некоторые поля обязательными, так что бы нельзя было создать экземпляр без их указания. Это делается с помощью аттрибута модуля `@enforce_keys`:
 
-```
+```elixir
   defmodule Topic do
     @enforce_keys [:subject]
     defstruct [
@@ -89,7 +89,7 @@ iex(6)> topic = %Topic{subject: "Interview", description: "Job Interview", prior
 ```
 
 И теперь если мы попытаемся создать экземпляр не указав `subject`, то получим исключение:
-```
+```elixir
 iex(7)> topic = %Topic{}
 ** (ArgumentError) the following keys must also be given when building struct MyCalendar.Model.Struct.Topic: [:subject]
 
@@ -103,7 +103,7 @@ iex(9)> topic = %Topic{subject: "Interview"}
 
 Структура -- это абстракция поверх словарей. Она существует на этапе компиляции, но в рантайме любая структура превращается в словарь с дополнительным ключом `__struct__`, указывающим ее тип:
 
-```elixir-iex
+```elixir
 iex(11)> topic.__struct__
 MyCalendar.Model.Struct.Topic
 iex(13)> topic_m = Map.from_struct(topic)
@@ -114,7 +114,7 @@ iex(15)> i topic_m
 
 Реализуем все структуры для нашей модели:
 
-```
+```elixir
 defmodule MyCalendar.Model.Struct do
 
   defmodule Place do
@@ -153,7 +153,7 @@ end
 
 Создадим событие:
 
-```
+```elixir
   def sample_event_struct() do
     alias MyCalendar.Model.Struct, as: S
 
@@ -180,7 +180,7 @@ end
 
 И создадим экземпляр:
 
-```
+```elixir
 iex(17)> event = MyCalendar.sample_event_struct()
 ```
 
@@ -189,7 +189,7 @@ iex(17)> event = MyCalendar.sample_event_struct()
 
 Модифицировать данные на первом уровне вложенности легко. Ситаксис для структур аналогичен синтаксису для словарей:
 
-```elixir-iex
+```elixir
 event = %S.Event{event | title: "Team Gathering"}
 event.title
 ```
@@ -198,7 +198,7 @@ event.title
 
 Если мы попытаемся вызывать `put_in` или `update_in` для struct, то увидим, что макросы работают, а функции нет.
 
-```elixir-iex
+```elixir
 > event = MyCalendar.sample_event_struct
 > put_in(event.place.room, "Room 456")
 
@@ -230,7 +230,7 @@ Behaviour module указывает, какие функции обратног�
 - pop(data, key)
 
 Callback module реализует эти функции у себя. В нашем случае это модуль `Place`:
-```
+```elixir
   defmodule Place do
     @behaviour Access
     @enforce_keys [:office, :room]
@@ -257,8 +257,8 @@ Callback module реализует эти функции у себя. В наш�
 
 Полная реализация:
 
-```
-  defmodule Place do
+```elixir
+  defmodule Plaelixirce do
     @behaviour Access
     @enforce_keys [:office, :room]
     defstruct [:office, :room]
@@ -285,7 +285,7 @@ Callback module реализует эти функции у себя. В наш�
 Теперь мы можем проверить, как это работает.
 
 Функцию `fetch` мы реализовали для обоих ключей:
-```
+```elixir
 iex(14)> get_in(place, [:room])
 "42"
 iex(15)> get_in(place, [:office])
@@ -293,7 +293,7 @@ iex(15)> get_in(place, [:office])
 ```
 
 А функцию `get_and_update` мы реализовали только для ключа `office`:
-```
+```elixir
 iex(12)> put_in(place, [:office], "Office 5")
 %MyCalendar.Model.Struct.Place{office: "Office 5", room: "42"}
 iex(13)> put_in(place, [:room], "Room 5")
@@ -304,14 +304,14 @@ iex(13)> put_in(place, [:room], "Room 5")
 Понятно, что реализовать behaviour нужно для каждой нашей структуры: Place, Participant, Topic, Event. Это работа не сложная, но большая и занудная. И в целом бессмысленная.
 
 Для изменения ключей на первом уровне проще использовать обычный синтаксис:
-```
+```elixir
 iex(24)> %S.Place{place | room: "Room 5"}
 %MyCalendar.Model.Struct.Place{office: "Office #2", room: "Room 5"}
 ```
 
 А для глубоко вложенных данных лучше реализовать специфические для данной сущности функции. Например для `Event` реализовать функции `add_participant` и `replace_participant`.
 
-```
+```elixir
   defmodule Event do
     @enforce_keys [:title, :place, :time, :participants, :agenda]
     defstruct [:title, :place, :time, :participants, :agenda]
@@ -325,7 +325,7 @@ iex(24)> %S.Place{place | room: "Room 5"}
   end
 ```
 
-```
+```elixir
 iex(19)> alias MyCalendar.Model.Struct, as: S
 iex(20)> john = %S.Participant{name: "John", role: :qa}
 iex(21)> S.Event.add_participant(event, john)
@@ -333,7 +333,7 @@ iex(21)> S.Event.add_participant(event, john)
 
 Для `replace_participant` нам нужно идентифицировать участника. По-хорошему, это должен быть уникальный id. Но мы не предусмотрели такой id, так что будем использовать name. (Что годится для учебных целей, но не годится для реального проекта).
 
-```
+```elixir
     def replace_participant(
           %Event{participants: participants} = event,
           %Participant{} = updated_participant
@@ -346,7 +346,7 @@ iex(21)> S.Event.add_participant(event, john)
 ```
 
 Запускаем:
-```
+```elixir
 iex(22)> bill = %MyCalendar.Model.Struct.Participant{name: "Bill", role: :devops}
 iex(24)> MyCalendar.Model.Struct.Event.replace_participant(event, bill)
 ```

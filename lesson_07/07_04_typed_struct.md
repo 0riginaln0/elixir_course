@@ -24,7 +24,7 @@
 
 Вернемся к нашему проекту и создадим модель на базе структур с описанием типов.
 
-```
+```elixir
   defmodule Place do
     @type t() :: %Place{
             office: String.t(),
@@ -49,7 +49,7 @@
 
 Мы можем хотя бы не повторять имя модуля дважды:
 
-```
+```elixir
   defmodule Participant do
     @type t() :: %__MODULE__{
             name: String.t(),
@@ -69,7 +69,7 @@
 - number()
 - boolean()
 
-```
+```elixir
   defmodule Topic do
     @type t() :: %__MODULE__{
             subject: String.t(),
@@ -89,7 +89,7 @@
 
 Тип можно описать как множество возможных значений: `priority: :high | :medium | :low`. Это **перечисляемый тип**. И на самом деле именно он и должен называться **Enum**, как в большинстве других языков программирования. Но в Эликсир название **Enum** почему-то дано модулю для работы с коллециями.
 
-```
+```elixir
   defmodule Event do
     @type t() :: %__MODULE__{
             title: String.t(),
@@ -113,7 +113,7 @@
 
 Создадим экземпляр встречи:
 
-```
+```elixir
 defmodule MyCalendar do
   ...
   def sample_event_typed_struct() do
@@ -146,7 +146,7 @@ end
 
 И запустим проект:
 
-```
+```elixir
 iex(1)> MyCalendar.sample_event_typed_struct()
 %MyCalendar.Model.TypedStruct.Event{
   title: "Team Meeting",
@@ -189,7 +189,7 @@ mix dialyzer
 
 Результат анализа:
 
-```
+```elixir
 Finding suitable PLTs
 Checking PLT...
 ...
@@ -217,7 +217,7 @@ done (passed successfully)
 
 Компилятор не находит эту ошибку, dialyzer находит:
 
-```
+```elixir
 Total errors: 1, Skipped: 0, Unnecessary Skips: 0
 done in 0m3.43s
 lib/model/event_typed_struct.ex:43:unknown_type
@@ -226,7 +226,7 @@ Unknown type: Location.t/0.
 
 Сделаем другую ошибку:
 
-```
+```elixir
   defmodule Event do
     @type t() :: %__MODULE__{
             title: String.t(),
@@ -239,7 +239,7 @@ Unknown type: Location.t/0.
 
 Снова укажем несуществующий тип, но на этот раз без ссылки на модуль, где он, якобы, описан:
 
-```
+```elixir
  $ mix compile
 Compiling 1 file (.ex)
 
@@ -250,7 +250,7 @@ Compiling 1 file (.ex)
 Теперь ошибку видит и компилятор тоже.
 
 Попробуем вызывать несуществующую функцию:
-```
+```elixir
 defmodule MyCalendar do
   ...
   def sample_event_typed_struct() do
@@ -258,10 +258,10 @@ defmodule MyCalendar do
     TS.Event.add_participant(event, nil)
   end
 end
-```
+```elixir
 
 Компилятор даёт понятное предупреждение:
-```
+```elixir
 $ mix compile
 Compiling 1 file (.ex)
 warning: MyCalendar.Model.TypedStruct.Event.add_participant/2 is undefined or private
@@ -269,7 +269,7 @@ warning: MyCalendar.Model.TypedStruct.Event.add_participant/2 is undefined or pr
 ```
 
 Dialyzer тоже даёт понятное сообщение:
-```
+```elixir
 ...
 lib/my_calendar.ex:93:call_to_missing
 Call to missing or private function MyCalendar.Model.TypedStruct.Event.add_participant/2.
@@ -277,7 +277,7 @@ Call to missing or private function MyCalendar.Model.TypedStruct.Event.add_parti
 ```
 
 Давайте определим такую функцию:
-```
+```elixir
   defmodule Event do
     ...
     def add_participant(%Event{} = event, %Participant{} = _participant) do
@@ -287,7 +287,7 @@ Call to missing or private function MyCalendar.Model.TypedStruct.Event.add_parti
 ```
 
 Теперь комплятор вполне доволен, и не выдаёт никаких предупреждений. А Dialyzer замечает проблему:
-```
+```elixir
 Total errors: 2, Skipped: 0, Unnecessary Skips: 0
 done in 0m3.45s
 lib/my_calendar.ex:68:no_return
@@ -313,20 +313,20 @@ from the success typing arguments:
 Мы передаём вторым аргументом `nil`, а функция ожидает `%Participant{}`.
 
 Уберём шаблоны из определения функции:
-```
+```elixir
     def add_participant(event, _participant) do
 ```
 
 Теперь и компилятор и dialyzer не замечают никаких проблем. И правильно, потому что тут и нет никаких проблем.
 
 А теперь добавим спецификацию к функции:
-```
+```elixir
     @spec add_participant(Event.t(), Participant.t()) :: Event.t()
     def add_participant(event, _participant) do
 ```
 
 Копилятор игнорирует такие спецификации. А Dialyzer не игнорирует и находит проблему:
-```
+```elixir
 Total errors: 2, Skipped: 0, Unnecessary Skips: 0
 done in 0m3.42s
 lib/my_calendar.ex:68:no_return
@@ -349,7 +349,7 @@ breaks the contract
 Он опять видит, что второй аргумент `nil` не соответствует типу `Participant.t()`.
 
 Изменим спецификацию, укажем, что второй аргумент может быть `nil`:
-```
+```elixir
     @spec add_participant(Event.t(), Participant.t() | nil) :: Event.t()
     def add_participant(event, _participant) do
 ```
@@ -357,27 +357,27 @@ breaks the contract
 И теперь всё в порядке.
 
 Dialyzer не всегда замечает проблемы. Создадим неправильный topic:
-```
+```elixir
 _topic = %TS.Topic{subject: 42, description: false, priority: :critical}
 ```
 Здесь все типы данных внутри структуры неправильные. Но компилятор и dialyzer не реагируют на это. Они просто не знают, что тип `t()` внутри модуля `Topic` имеет какое-то отношение к структуре `%Topic{}`.
 
 Но давайте определим функцию `add_topic`:
-```
+```elixir
     @spec add_topic(Event.t(), Topic.t()) :: Event.t()
     def add_topic(event,  _topic) do
       event
     end
 ```
 И вызовем её:
-```
+```elixir
     topic = %TS.Topic{subject: 42, description: false, priority: :critical}
     TS.Event.add_topic(event, topic)
 ```
 И вот теперь dialyzer видит несовпадение типов.
 
 TODO:
-```
+```elixir
  iex -S mix
 Warning: the `dialyxir` application's start function was called, which likely means you
 did not add the dependency with the `runtime: false` flag.
@@ -386,7 +386,7 @@ did not add the dependency with the `runtime: false` flag.
 ```
 
 TODO: проблема со значениями по-умолчанию
-```
+```elixir
 %TS.Topic{title: "Weather", description: "disscuss tomorow wearher"}
 ```
 dialyzer выдаёт ошибку без объяснений.
