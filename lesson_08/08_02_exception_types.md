@@ -4,7 +4,7 @@
 
 Кроме **raise** есть еще один способ сгенерировать исключение -- **throw**.
 
-```
+```elixir
 > raise "something went wrong"
 ** (RuntimeError) something went wrong
 
@@ -40,7 +40,7 @@ end
 
 Исключения класса **:throw** генерируется вызовом функции `throw/1`:
 
-```elixir-iex
+```elixir
 > throw(:some_error)
 ** (throw) :some_error
 ```
@@ -49,7 +49,7 @@ end
 
 Исключения класса **:error** возникают при ошибках в рантайме, таких как `:badmatch`, `:badarith` и др. Их можно сгененировать вызовом функции `:erlang.error/1`:
 
-```elixir-iex
+```elixir
 > :erlang.error(:some_error)
 ** (ErlangError) Erlang error: :some_error
 ```
@@ -72,7 +72,7 @@ end
 
 Итак, у нас есть три класса исключений и два способа их перехватывать. Давайте посмотрим, как это работает всё вместе:
 
-```
+```elixir
 > c "lib/exception_types.exs"
 [ExceptionTypesExample]
 > alias ExceptionTypesExample, as: E
@@ -96,7 +96,7 @@ rescue from %FunctionClauseError{module: ExceptionTypesExample, function: :gener
 
 Мы видим, что **rescue** перехватывает **raise** и **:error**, но не может перехватить **:throw** и **:exit**.
 
-```
+```elixir
 > E.try_catch(:raise)
 catch error %RuntimeError{message: "something went wrong"}
 :ok
@@ -125,7 +125,7 @@ catch error :function_clause
 
 Речь идет о синхронном взаимодействии между двумя потоками, где один поток выполняет роль клиента и отправляет запрос, а другой поток выполняет роль сервера и отвечает на этот запрос. Если обработка запроса длится слишком долго (по умолчанию лимит составляет 5 секунд), то генерируется исключение класса `:exit`. Потому что здесь речь идёт о взаимодействии процессов.
 
-```elixir-iex
+```elixir
 > c "lib/gen_server_timeout.exs"
 [GenServerTimeoutExample, MyServer]
 > alias GenServerTimeoutExample, as: E

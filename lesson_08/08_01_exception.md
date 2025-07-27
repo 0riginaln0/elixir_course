@@ -4,14 +4,14 @@
 
 Исключение **MatchError** возникает, если не сработало совпадение с образцом:
 
-```elixir-iex
+```elixir
 > {:ok, _} = {:not_ok, 42}
 ** (MatchError) no match of right hand side value: {:not_ok, 42}
 ```
 
 Исключение **ArithmeticError** возникает при неправильных аргументах для операторов арифметики:
 
-```elixir-iex
+```elixir
 > 42 + :a
 ** (ArithmeticError) bad argument in arithmetic expression: 42 + :a
     :erlang.+(42, :a)
@@ -19,7 +19,7 @@
 
 Вот еще некоторые:
 
-```elixir-iex
+```elixir
 > some_fun()
 ** (CompileError) iex:1: undefined function some_fun/0
 
@@ -32,21 +32,21 @@
 
 Функция raise генерирует исключение:
 
-```elixir-iex
+```elixir
 > raise(RuntimeError)
 ** (RuntimeError) runtime error
 ```
 
 Можно указать аттрибут **message**, который есть у исключений всех типов:
 
-```elixir-iex
+```elixir
 > raise(RuntimeError, message: "something happened")
 ** (RuntimeError) something happened
 ```
 
 RuntimeError -- этот тип исключения используется по-умолчанию, так что его можно явно не указывать:
 
-```elixir-iex
+```elixir
 > raise("some error")
 ** (RuntimeError) something happened
 ```
@@ -57,7 +57,7 @@ RuntimeError -- этот тип исключения используется п
 
 Давайте проверим, как это работает:
 
-```
+```elixir
 defmodule ExceptionExample do
   def try_rescue() do
     try do
@@ -80,7 +80,7 @@ end
 
 Код `:a = :b` вызывает `MatchError`.
 
-```
+```elixir
 iex(5)> c("lib/exception.exs")
 [ExceptionExample]
 iex(8)> alias ExceptionExample, as: E
@@ -90,7 +90,7 @@ This is MatchError or ArithmeticError: %MatchError{term: :b}
 
 Попробуем другое исключение:
 
-```
+```elixir
   def try_rescue() do
     try do
       # :a = :b
@@ -99,7 +99,7 @@ This is MatchError or ArithmeticError: %MatchError{term: :b}
 
 Здесь будет `ArithmeticError`:
 
-```
+```elixir
 iex(8)> r E
 iex(9)> E.try_rescue()
 This is MatchError or ArithmeticError: %ArithmeticError{message: "bad argument in arithmetic expression"}
@@ -107,7 +107,7 @@ This is MatchError or ArithmeticError: %ArithmeticError{message: "bad argument i
 
 Теперь `RuntimeError`:
 
-```
+```elixir
   def try_rescue() do
     try do
       # :a = :b
@@ -121,7 +121,7 @@ This is RuntimeError: %RuntimeError{message: "runtime error"}
 
 И `UndefinedFunctionError` которое попадёт в последний гард:
 
-```
+```elixir
   def try_rescue() do
     try do
       # :a = :b
@@ -136,7 +136,7 @@ unknown error: %UndefinedFunctionError{arity: 0, function: :some_fun, message: n
 
 И как полагается в обработке исключений, мы можем указать блок `after`:
 
-```
+```elixir
     rescue
       error in [MatchError, ArithmeticError] ->
         IO.puts("This is MatchError or ArithmeticError: #{inspect(error)}")
@@ -153,7 +153,7 @@ unknown error: %UndefinedFunctionError{arity: 0, function: :some_fun, message: n
 
 И он будет выполняться всегда, не зависимо от того, произошло исключение или нет:
 
-```
+```elixir
 iex(12)> r E
 iex(13)> E.try_rescue()
 unknown error: %UndefinedFunctionError{arity: 0, function: :some_fun, message: nil, module: SameModule, reason: nil}
@@ -166,7 +166,7 @@ After clause is always called
 Многие функции в Эликсир имеют два варианта. Один вариант возвращает `{:ok, Result} | {:error, Reason}`, другой вариант бросает исключение.
 
 Например:
-```elixir-iex
+```elixir
 > m = %{:a => 42}
 %{a: 42}
 > Map.fetch(m, :a)
@@ -181,7 +181,7 @@ After clause is always called
 ```
 
 Или другой пример:
-```elixir-iex
+```elixir
 > File.read("./README.md")
 {:ok, "..."}
 > File.read("./somefile")

@@ -17,7 +17,7 @@
 
 Начнём с аутентификации. Клиент передаёт либо некий токен, либо логин и пароль. Если они не валидные, то мы генерируем исключение `AuthorizationError`:
 
-```
+```elixir
   defmodule AuthenticationError do
     @enforce_keys [:type]
     defexception [:type, :token, :login]
@@ -34,7 +34,7 @@
 
 В целом модуль выглядит так:
 
-```
+```elixir
   defmodule AuthenticationError do
     @enforce_keys [:type]
     defexception [:type, :token, :login]
@@ -61,7 +61,7 @@
 
 После того, как мы узнали, кто отправил запрос, мы проверяем, есть ли у клиента право выполнять такие запросы. Если нет, то генерируем исключение `AuthorizationError`:
 
-```
+```elixir
   defmodule AuthorizationError do
     @enforce_keys [:role, :action]
     defexception [:role, :action]
@@ -80,7 +80,7 @@
 
 Ну и на третьем шаге проверяем данные. Если они не соответствуют схеме, то генерируем исключение `SchemaValidationError`:
 
-```
+```elixir
   defmodule SchemaValidationError do
     @enforce_keys [:schema_name]
     defexception [:schema_name]
@@ -99,7 +99,7 @@
 
 Теперь построим логику обработки запроса на этих исключениях:
 
-```
+```elixir
   def handle(request) do
     try do
       authorize(request)
@@ -125,7 +125,7 @@
 
 Мы подразумеваем, что функции `authorize`, `authenticate` и `validate` делают свою работу правильно. Но сейчас мы просто сделаем заглушки:
 
-```
+```elixir
   def authorize(request) do
     case request.token do
       "aaa" -> :ok
@@ -151,7 +151,7 @@
 
 Обработка валидного запроса будет в функции `do_something_useful`, которая сейчас тоже представлена заглушкой:
 
-```
+```elixir
   def do_something_useful(%{data: %{a: 100}}) do
     raise "something happened"
   end
@@ -163,7 +163,7 @@
 
 Наконец, подготовим несколько разных запросов, которые будут попадать в разные ветки кода:
 
-```
+```elixir
   def request1(), do: %{token: "aaa", data: %{a: 42}}
 
   def request2(), do: %{token: "bbb", data: %{a: 42}}
@@ -179,7 +179,7 @@
 
 Первый запрос выполняется успешно:
 
-```
+```elixir
 iex(1)> alias CustomExceptionExample, as: C
 CustomExceptionExample
 iex(2)> C.request1() |> C.handle()
@@ -188,28 +188,28 @@ iex(2)> C.request1() |> C.handle()
 
 Второй запрос не проходит авторизацию:
 
-```
+```elixir
 iex(3)> C.request2() |> C.handle()
 {403, "AuthorizationError: role 'guest' is not allowed to do action 'reconfigure'"}
 ```
 
 Третий запрос не проходит валидацию по схеме:
 
-```
+```elixir
 iex(4)> C.request3() |> C.handle()
 {409, "SchemaValidationError: data does not match to schema 'some-schema.json'"}
 ```
 
 Четвёртый запрос не проходит аутентификацию:
 
-```
+```elixir
 iex(5)> C.request4() |> C.handle()
 {403, "AuthenticationError: invalid token"}
 ```
 
 Пятый запрос вызывает `RuntimeError`:
 
-```
+```elixir
 iex(6)> C.request5() |> C.handle()
 ** (RuntimeError) something happened
     custom_exceptions.exs:57: CustomExceptionExample.do_something_useful/1
