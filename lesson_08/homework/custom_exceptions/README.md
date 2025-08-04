@@ -12,7 +12,7 @@
 
 Например: 
 
-```elixir-iex
+```elixir
 > Homework.get_many_from_list!(["cat", "dog", "fish"], [0, 0, 2, 2]) 
 ["cat", "cat", "fish", "fish"]
 ```
@@ -21,7 +21,7 @@
 
 Например:
 
-```elixir-iex
+```elixir
 > Homework.get_many_from_list(["cat", "dog", "fish"], [1, 0]) 
 {:ok, ["dog", "cat"]}
 ```
