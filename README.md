@@ -1,4 +1,4 @@
-Progress: 43/54
+Progress: 45/54
 
 # Setup snippets
 
@@ -140,7 +140,7 @@ LSP-elixir
 
 - [x] 08.03. Пользовательские типы исключений.
 
-- [ ] 08.04. Defensive Programming vs Let It Crash.
+- [x] 08.04. Defensive Programming vs Let It Crash.
 
 ### Урок №9. Композиция функций.
 
