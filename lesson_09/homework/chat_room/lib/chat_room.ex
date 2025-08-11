@@ -3,27 +3,20 @@ defmodule ChatRoom do
 
   @spec join_room(M.user_name(), M.room_name()) :: :ok | {:error, atom}
   def join_room(user_name, room_name) do
-    case get_user(user_name) do
-      {:ok, user} -> join_room_for_user(user, room_name)
-      {:error, _} -> {:error, :user_not_found}
+    with {:ok, user} <- get_user(user_name) |> map_error(:user_not_found),
+         {:ok, room} <- get_room(room_name) |> map_error(:room_not_found) do
+      cond do
+        reached_limit?(room) -> {:error, :room_reached_limit}
+        public?(room) -> :ok
+        member?(user, room) -> :ok
+        true -> {:error, :not_allowed}
+      end
     end
   end
 
-  defp join_room_for_user(user, room_name) do
-    case get_room(room_name) do
-      {:ok, room} -> check_room_access(user, room)
-      {:error, _} -> {:error, :room_not_found}
-    end
-  end
-
-  defp check_room_access(user, room) do
-    cond do
-      reached_limit?(room) -> {:error, :room_reached_limit}
-      public?(room) -> :ok
-      member?(user, room) -> :ok
-      true -> {:error, :not_allowed}
-    end
-  end
+  # Convert generic error into provided one
+  defp map_error({:error, _}, new_error), do: {:error, new_error}
+  defp map_error({:ok, value}, _), do: {:ok, value}
 
   @users [
     %M.User{name: "User 1"},
