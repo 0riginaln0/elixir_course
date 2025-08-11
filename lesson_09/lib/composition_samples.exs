@@ -4,7 +4,7 @@ defmodule Lesson_09.CompositionSamples do
   def f1(a) do
     a + 1
   end
-
+ 
   @spec f2(integer()) :: integer()
   def f2(a) do
     a + 10

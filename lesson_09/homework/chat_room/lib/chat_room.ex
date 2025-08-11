@@ -4,32 +4,24 @@ defmodule ChatRoom do
   @spec join_room(M.user_name(), M.room_name()) :: :ok | {:error, atom}
   def join_room(user_name, room_name) do
     case get_user(user_name) do
-      {:error, _} ->
-        {:error, :user_not_found}
+      {:ok, user} -> join_room_for_user(user, room_name)
+      {:error, _} -> {:error, :user_not_found}
+    end
+  end
 
-      {:ok, user} ->
-        case get_room(room_name) do
-          {:error, _} ->
-            {:error, :room_not_found}
+  defp join_room_for_user(user, room_name) do
+    case get_room(room_name) do
+      {:ok, room} -> check_room_access(user, room)
+      {:error, _} -> {:error, :room_not_found}
+    end
+  end
 
-          {:ok, room} ->
-            case reached_limit?(room) do
-              true ->
-                {:error, :room_reached_limit}
-
-              false ->
-                case public?(room) do
-                  true ->
-                    :ok
-
-                  false ->
-                    case member?(user, room) do
-                      true -> :ok
-                      false -> {:error, :not_allowed}
-                    end
-                end
-            end
-        end
+  defp check_room_access(user, room) do
+    cond do
+      reached_limit?(room) -> {:error, :room_reached_limit}
+      public?(room) -> :ok
+      member?(user, room) -> :ok
+      true -> {:error, :not_allowed}
     end
   end
 
