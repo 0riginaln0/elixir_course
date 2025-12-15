@@ -1,4 +1,4 @@
-Progress: 53/54
+Progress: 54/54
 
 # Setup snippets
 
@@ -163,9 +163,9 @@ LSP-elixir
 
 ### Курсовой проект Work Report.
 
-- [ ] Курсовой проект
+- [x] Курсовой проект
 
-*Не, братан, я не хочу делать CLI app на Элексире. Сорян)
+Курсовик по своей теме) https://github.com/0riginaln0/tasks_analysis
 
 ## Часть 2. Многопоточность и OTP.
 
